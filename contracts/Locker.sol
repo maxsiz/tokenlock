@@ -10,6 +10,7 @@ pragma solidity ^0.8.2;
 contract Locker is LockerTypes {
     using SafeERC20 for IERC20;
 
+    string  constant name = "Lock & Registry v0.0.1"; 
     uint256 constant MAX_VESTING_RECORDS_PER_LOCK = 250;
     LockStorageRecord[] lockerStorage;
 
@@ -29,10 +30,9 @@ contract Locker is LockerTypes {
 
     {
         require(IERC20(_ERC20).allowance(msg.sender, address(this)) >= _amount, "PLease approve first");
-        require(_getArraySum(_unlockAmount) == _amount, "Sum vesting records must be equal lock amount");
+        //require(_getArraySum(_unlockAmount) == _amount, "Sum vesting records must be equal lock amount");
         require(_unlockedFrom.length == _unlockAmount.length, "Length of periods and amounts arrays must be equal");
         require(_beneficiaries.length == _beneficiariesShares.length, "Length of beneficiaries and shares arrays must be equal");
-        require(_getArraySum(_unlockAmount) == _amount, "Sum vesting records must be equal lock amount");
 
         
         //Lets prepare vestings array
@@ -51,7 +51,7 @@ contract Locker is LockerTypes {
         //to storage not yet supported.
         //so we need this cycle
         for (uint256 i = 0; i < _unlockedFrom.length; i ++ ) {
-            lock.vestings[i] = v[i];    
+            lock.vestings.push(v[i]);    
         }
 
         //Lets save _beneficiaries for this lock
@@ -86,10 +86,12 @@ contract Locker is LockerTypes {
             availableAmount = _desiredAmount;
         }
 
-        IERC20 token = IERC20(lock.token);
-        token.safeTransfer(msg.sender, availableAmount);
         //update claimed amount
         _decreaseAvailableAmount(msg.sender, _lockIndex, availableAmount);
+
+        //send tokens
+        IERC20 token = IERC20(lock.token);
+        token.safeTransfer(msg.sender, availableAmount);
     }
 
     ////////////////////////////////////////////////////////////
