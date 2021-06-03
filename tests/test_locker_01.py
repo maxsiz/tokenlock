@@ -22,4 +22,4 @@ def test_lock(accounts, projecttoken, locker):
 
     # with reverts("MinterRole: caller does not have the Minter role"):
     #     bettoken.burn(accounts[0], 1, {"from":accounts[1]})
-    # assert bettoken.balanceOf(accounts[0]) == 0
+    assert projecttoken.balanceOf(locker.address) == LOCKED_AMOUNT
