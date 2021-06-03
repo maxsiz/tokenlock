@@ -94,6 +94,18 @@ contract Locker is LockerTypes {
         token.safeTransfer(msg.sender, availableAmount);
     }
 
+    function getMyLocks() external view returns (RegistryShare[] memory) {
+        return _getUsersLocks(msg.sender);
+    }
+
+    function getLockRecordByIndex(uint256 _index) external view returns (LockStorageRecord memory){
+        return _getLockRecordByIndex(_index);
+    }
+
+    function getLockCount() external view returns (uint256) {
+        return lockerStorage.length;
+    }
+
     ////////////////////////////////////////////////////////////
     /////////// Internals           ////////////////////////////
     ////////////////////////////////////////////////////////////
@@ -141,6 +153,14 @@ contract Locker is LockerTypes {
             }
         }
         return (percent, claimed);
+    }
+
+    function _getUsersLocks(address _user) internal view returns (RegistryShare[] memory) {
+        return registry[_user];
+    }
+
+    function _getLockRecordByIndex(uint256 _index) internal view returns (LockStorageRecord memory){
+        return lockerStorage[_index];
     }
 
 }
