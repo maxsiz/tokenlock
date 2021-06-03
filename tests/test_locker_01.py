@@ -25,6 +25,7 @@ def test_lock(accounts, projecttoken, locker):
     assert projecttoken.balanceOf(locker.address) == LOCKED_AMOUNT
 
 def test_lock_properties(accounts, locker):
-    logging.info(locker.getMyLocks({'from':accounts[1]}))
+    logging.info(locker.getMyShares({'from':accounts[1]}))
     logging.info(locker.getLockRecordByIndex(0))
     assert locker.getLockCount() > 0
+    logging.info(locker.getArraySum([10e18,20e18,70e18]))

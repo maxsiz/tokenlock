@@ -17,6 +17,9 @@ contract Locker is LockerTypes {
     //map from users(investors)  to locked shares
     mapping(address => RegistryShare[])  public registry;
 
+    event NewLock(address indexed erc20, address indexed who, uint256 lockedAmount, uint256 lockId);
+    event EmitFutures(address indexed erc20, address indexed who, uint256 lockedAmount, uint256 claimDate);
+
     function lockTokens(
         address _ERC20, 
         uint256 _amount, 
@@ -29,8 +32,8 @@ contract Locker is LockerTypes {
         external 
 
     {
-        require(IERC20(_ERC20).allowance(msg.sender, address(this)) >= _amount, "PLease approve first");
-        //require(_getArraySum(_unlockAmount) == _amount, "Sum vesting records must be equal lock amount");
+        require(IERC20(_ERC20).allowance(msg.sender, address(this)) >= _amount, "Please approve first");
+        require(_getArraySum(_unlockAmount) == _amount, "Sum vesting records must be equal lock amount");
         require(_unlockedFrom.length == _unlockAmount.length, "Length of periods and amounts arrays must be equal");
         require(_beneficiaries.length == _beneficiariesShares.length, "Length of beneficiaries and shares arrays must be equal");
 
@@ -94,8 +97,8 @@ contract Locker is LockerTypes {
         token.safeTransfer(msg.sender, availableAmount);
     }
 
-    function getMyLocks() external view returns (RegistryShare[] memory) {
-        return _getUsersLocks(msg.sender);
+    function getMyShares() external view returns (RegistryShare[] memory) {
+        return _getUsersShares(msg.sender);
     }
 
     function getLockRecordByIndex(uint256 _index) external view returns (LockStorageRecord memory){
@@ -104,6 +107,10 @@ contract Locker is LockerTypes {
 
     function getLockCount() external view returns (uint256) {
         return lockerStorage.length;
+    }
+
+    function getArraySum(uint256[] memory _array) external pure returns (uint256) {
+        return _getArraySum(_array);
     }
 
     ////////////////////////////////////////////////////////////
@@ -124,8 +131,8 @@ contract Locker is LockerTypes {
 
     function _getArraySum(uint256[] memory _array) internal pure returns (uint256) {
         uint256 res = 0;
-        for (uint256 i = 0; i < _array.length; i ++ ) {
-            res += _array[1];           
+        for (uint256 i = 0; i < _array.length; i++) {
+            res += _array[i];           
         }
         return res;
     }
@@ -155,7 +162,7 @@ contract Locker is LockerTypes {
         return (percent, claimed);
     }
 
-    function _getUsersLocks(address _user) internal view returns (RegistryShare[] memory) {
+    function _getUsersShares(address _user) internal view returns (RegistryShare[] memory) {
         return registry[_user];
     }
 
