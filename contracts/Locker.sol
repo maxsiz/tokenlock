@@ -3,6 +3,7 @@
 //import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/access/Ownable.sol";
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/IERC20.sol";
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/utils/SafeERC20.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC1155/IERC1155.sol";
 import "./LockerType.sol";
 
 pragma solidity ^0.8.2;
@@ -95,6 +96,14 @@ contract Locker is LockerTypes {
         //send tokens
         IERC20 token = IERC20(lock.token);
         token.safeTransfer(msg.sender, availableAmount);
+    }
+
+    function emitFutures(uint256 _lockIndex, uint256 _vestingIndex) external returns (uint256){
+        LockStorageRecord memory lock = lockerStorage[_lockIndex];
+    }
+
+    function claimWithNFT(uint256 _tokenId) external {
+
     }
 
     function getMyShares() external view returns (RegistryShare[] memory) {
