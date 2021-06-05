@@ -8,22 +8,7 @@ LOCKED_AMOUNT = 100e18
 
 
 def test_lock(accounts, projecttoken, locker):
-<<<<<<< Updated upstream
-    with reverts("Please approve first"):
-        locker.lockTokens(
-        projecttoken.address,
-        LOCKED_AMOUNT,
-        [chain.time() + 100 , chain.time() + 200, chain.time() + 300 ],
-        [10e18,20e18,70e18],
-        [accounts[1],accounts[1],accounts[3]],
-        [10,20,30],
-        {'from':accounts[0]}
-        )
-
-    projecttoken.approve(locker.address, projecttoken.balanceOf(accounts[0]), {'from':accounts[0]})
-=======
     projecttoken.approve(locker.address, projecttoken.balanceOf(accounts[0]), {'from': accounts[0]})
->>>>>>> Stashed changes
     locker.lockTokens(
         projecttoken.address,
         LOCKED_AMOUNT,
@@ -34,9 +19,9 @@ def test_lock(accounts, projecttoken, locker):
         {'from': accounts[0]}
     )
 
-    logging.info('registry for account[3]={}'.format(locker.registry(accounts[3], 0)))
+    logging.info('registry for account[1] to claim={}'.format(locker.registry(accounts[1], 0)))
 
-    # with reverts("Please approve first"):
+    # with reverts("MinterRole: caller does not have the Minter role"):
     #     bettoken.burn(accounts[0], 1, {"from":accounts[1]})
     assert projecttoken.balanceOf(locker.address) == LOCKED_AMOUNT
 
@@ -46,10 +31,10 @@ def test_lock_properties(accounts, locker):
     logging.info(locker.getMyShares({'from': accounts[1]}))
     logging.info(locker.getLockRecordByIndex(0))
     assert locker.getLockCount() > 0
-<<<<<<< Updated upstream
-    logging.info(locker.getArraySum([10e18,20e18,70e18]))
-
-
-=======
     logging.info(locker.getArraySum([10e18, 20e18, 70e18]))
->>>>>>> Stashed changes
+#
+#
+def test_claim_token(accounts, locker, projecttoken):
+    locker.claimTokens(0, 10e18, {'from': accounts[3]})
+
+    assert projecttoken.balanceOf(accounts[3]) == 10e18
