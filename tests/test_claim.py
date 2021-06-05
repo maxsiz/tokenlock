@@ -18,14 +18,15 @@ def test_claim_token(accounts, locker, projecttoken):
         {'from': accounts[0]}
     )
 
-
     with reverts("Insufficient for now"):
         locker.claimTokens(0, 10e18, {'from': accounts[1]})
+
+    with reverts("Cant claim zero"):
+        locker.claimTokens(0, 0, {'from': accounts[1]})
 
     locker.claimTokens(0, 100, {'from': accounts[3]})
 
     locker.claimTokens(0, 200, {'from': accounts[3]})
-    # locker.claimTokens(0, 0, {'from': accounts[3]})
 
     assert projecttoken.balanceOf(accounts[3]) == 300
 

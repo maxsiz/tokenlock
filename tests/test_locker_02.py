@@ -50,7 +50,7 @@ def test_locks_double_lock(accounts, projecttoken, locker):
         [chain.time() + 100, chain.time() + 200, chain.time() + 300],
         [10e18, 20e18, 70e18],
         [accounts[4], accounts[5], accounts[6]],
-        [10, 20, 30],
+        [100, 100, 100],
         {'from': accounts[0]}
     )
 
