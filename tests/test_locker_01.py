@@ -8,7 +8,6 @@ LOCKED_AMOUNT = 100e18
 
 
 def test_lock(accounts, projecttoken, locker):
-<<<<<<< Updated upstream
     with reverts("Please approve first"):
         locker.lockTokens(
         projecttoken.address,
@@ -21,9 +20,6 @@ def test_lock(accounts, projecttoken, locker):
         )
 
     projecttoken.approve(locker.address, projecttoken.balanceOf(accounts[0]), {'from':accounts[0]})
-=======
-    projecttoken.approve(locker.address, projecttoken.balanceOf(accounts[0]), {'from': accounts[0]})
->>>>>>> Stashed changes
     locker.lockTokens(
         projecttoken.address,
         LOCKED_AMOUNT,
@@ -46,10 +42,4 @@ def test_lock_properties(accounts, locker):
     logging.info(locker.getMyShares({'from': accounts[1]}))
     logging.info(locker.getLockRecordByIndex(0))
     assert locker.getLockCount() > 0
-<<<<<<< Updated upstream
     logging.info(locker.getArraySum([10e18,20e18,70e18]))
-
-
-=======
-    logging.info(locker.getArraySum([10e18, 20e18, 70e18]))
->>>>>>> Stashed changes

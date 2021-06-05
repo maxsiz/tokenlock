@@ -1,16 +1,49 @@
 import pytest
 import logging
-from numpy.random import multinomial
-from brownie import Wei, reverts, chain, given, strategy
+from brownie.test import given, strategy
+from brownie import Wei, reverts, chain
 
 LOGGER = logging.getLogger(__name__)
 
 LOCKED_AMOUNT = 100e18
 
 
+# test for reverts
+def test_locks(accounts, projecttoken, locker):
+    projecttoken.approve(locker.address, projecttoken.balanceOf(accounts[0]), {'from': accounts[0]})
+    with reverts("Sum vesting records must be equal lock amount"):
+        locker.lockTokens(
+            projecttoken.address,
+            LOCKED_AMOUNT,
+            [chain.time()+100, chain.time()+200, chain.time()+300],
+            [0, 0, 0],
+            [accounts[4], accounts[5], accounts[6]],
+            [10, 20, 30],
+            {'from': accounts[0]}
+        )
+    with reverts("Length of periods and amounts arrays must be equal"):
+        locker.lockTokens(
+            projecttoken.address,
+            LOCKED_AMOUNT,
+            [chain.time() + 300],
+            [10e18, 20e18, 70e18],
+            [accounts[4], accounts[5], accounts[6]],
+            [10, 20, 30],
+            {'from': accounts[0]}
+        )
+
+    with reverts("Length of beneficiaries and shares arrays must be equal"):
+        locker.lockTokens(
+            projecttoken.address,
+            LOCKED_AMOUNT,
+            [chain.time()+100, chain.time()+200, chain.time()+300],
+            [10e18, 20e18, 70e18],
+            [accounts[4], accounts[5], accounts[6]],
+            [10, 20],
+            {'from': accounts[0]}
+        )
 # testing lock function for calling lock function two times with same values
 def test_locks_double_lock(accounts, projecttoken, locker):
-    projecttoken.approve(locker.address, projecttoken.balanceOf(accounts[0]), {'from': accounts[0]})
     locker.lockTokens(
         projecttoken.address,
         LOCKED_AMOUNT,
@@ -50,24 +83,31 @@ def test_locks_zero_amounts(accounts, nulltoken, locker):
     assert nulltoken.balanceOf(locker.address) == 0
 
 # generate random amounts based on sum of beneficiaries
-def generate_random_amounts(amount, addresses):
-    return multinomial(amount, [1/10000.] * addresses)
+def generate_random_amounts(maxAmount):
+    amounts = []
+    if maxAmount == 0:
+        return  amounts.append(0)
+    for i in range(maxAmount):
+        amounts.append(1)
 
+    return  amounts
 # generate accounts based on sum beneficiaries
-def generate_random_accounts(beneficiaries, accounts):
+def generate_random_accounts(amount, accounts):
     userAr = []
-    for i in range(beneficiaries):
+    if amount == 0:
+        return userAr.append(accounts[0])
+    for i in range(amount):
         userAr.append(accounts[i])
 
     return userAr
 
 
 # test for random amount and random beneficiaries
-@given(amount=strategy('uint256', max_value=1000e18))
-@given(beneficiaries=strategy('uint256', max_value=10000))
-def test_locks_adjust_amounts(accounts, nulltoken, locker, amount, beneficiaries):
-    amountsAr = generate_random_amounts(amount, beneficiaries)
-    users = generate_random_accounts(beneficiaries, accounts)
+@given(amount=strategy('uint256', max_value=10, exclude=0))
+def test_locks_adjust_amounts(accounts, nulltoken, locker, amount):
+    users = generate_random_accounts(amount, accounts)
+    amountsAr = generate_random_amounts(amount)
+    locks_balance = nulltoken.balanceOf(locker.address)
     locker.lockTokens(
         nulltoken.address,
         amount,
@@ -77,9 +117,8 @@ def test_locks_adjust_amounts(accounts, nulltoken, locker, amount, beneficiaries
         amountsAr,
         {'from': accounts[0]}
     )
-    logging.info('registry for account[0]={}'.format(locker.registry(accounts[0], 0)))
-    assert nulltoken.balanceOf(locker.address) == amount
-
+    # logging.info('registry for account[0]={}'.format(locker.registry(accounts[0], 0)))
+    assert nulltoken.balanceOf(locker.address) == locks_balance + amount
 
 def test_lock_properties(accounts, locker):
     logging.info(locker.getMyShares({'from': accounts[1]}))
