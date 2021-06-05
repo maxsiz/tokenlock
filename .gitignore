@@ -4,3 +4,9 @@ __pycache__
 build/
 reports/
 logdo.md
+virutalenv
+.idea
+.vscode
+.virutalenv
+venv
+.pytest_cache

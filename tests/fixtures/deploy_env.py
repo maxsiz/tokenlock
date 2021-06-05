@@ -7,6 +7,11 @@ def projecttoken(accounts, TokenMock):
     yield token
 
 @pytest.fixture(scope="module")
+def nulltoken(accounts, TokenMock):
+    token = accounts[0].deploy(TokenMock, "Some Token", "STK")
+    yield token
+
+@pytest.fixture(scope="module")
 def locker(accounts, Locker):
-    l = accounts[0].deploy(Locker)
-    yield l
+    locker = accounts[0].deploy(Locker)
+    yield locker

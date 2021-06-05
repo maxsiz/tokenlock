@@ -167,6 +167,8 @@ contract Locker is LockerTypes {
                 res += v[i].amountUnlock;
             }
         }
+        // adding return function
+        return res;
     }
 
     function _getUserSharePercentAndClaimedAmount(address _user, uint256 _lockIndex) 
