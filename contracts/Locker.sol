@@ -3,7 +3,7 @@
 //import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/access/Ownable.sol";
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/IERC20.sol";
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/utils/SafeERC20.sol";
-import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC1155/IERC1155.sol";
+//import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC1155/IERC1155.sol";
 import "./LockerType.sol";
 
 pragma solidity ^0.8.2;
@@ -17,6 +17,9 @@ contract Locker is LockerTypes {
 
     //map from users(investors)  to locked shares
     mapping(address => RegistryShare[])  public registry;
+
+    //map form lockIndex to beneficiaries list
+    mapping(uint256 => address[]) beneficiariesInLock;
 
     event NewLock(address indexed erc20, address indexed who, uint256 lockedAmount, uint256 lockId);
     event EmitFutures(address indexed erc20, address indexed who, uint256 lockedAmount, uint256 claimDate);
@@ -51,6 +54,10 @@ contract Locker is LockerTypes {
         lock.ltype = LockType.ERC20;
         lock.token = _ERC20;
         lock.amount = _amount;
+
+        //Save beneficaries in one map
+        beneficiariesInLock[lockerStorage.length - 1];
+
         //Copying of type struct LockerTypes.VestingRecord memory[] memory 
         //to storage not yet supported.
         //so we need this cycle
@@ -98,17 +105,19 @@ contract Locker is LockerTypes {
         token.safeTransfer(msg.sender, availableAmount);
     }
 
-    function emitFutures(uint256 _lockIndex, uint256 _vestingIndex) external returns (uint256){
-        LockStorageRecord memory lock = lockerStorage[_lockIndex];
-    }
+    // function emitFutures(uint256 _lockIndex, uint256 _vestingIndex) external returns (uint256){
+    //     LockStorageRecord memory lock = lockerStorage[_lockIndex];
+    // }
 
-    function claimWithNFT(uint256 _tokenId) external {
+    // function claimWithNFT(uint256 _tokenId) external {
 
-    }
+    // }
 
     function getMyShares() external view returns (RegistryShare[] memory) {
         return _getUsersShares(msg.sender);
     }
+
+    //function getMyLockedVestings() external view returns (RegistryShare[] memory)
 
     function getLockRecordByIndex(uint256 _index) external view returns (LockStorageRecord memory){
         return _getLockRecordByIndex(_index);
@@ -146,7 +155,11 @@ contract Locker is LockerTypes {
         return res;
     }
 
-    function _getAvailableAmountByLockIndex(uint256 _lockIndex) internal view returns(uint256){
+    function _getAvailableAmountByLockIndex(uint256 _lockIndex) 
+        internal 
+        view 
+        returns(uint256)
+    {
         VestingRecord[] memory v = lockerStorage[_lockIndex].vestings;
         uint256 res = 0;
         for (uint256 i = 0; i < v.length; i ++ ) {
@@ -161,7 +174,7 @@ contract Locker is LockerTypes {
         view 
         returns(uint256 percent, uint256 claimed)
     {
-        RegistryShare[] memory shares = registry[msg.sender];
+        RegistryShare[] memory shares = registry[_user];
         for (uint256 i = 0; i < shares.length; i ++ ) {
             if  (shares[i].lockIndex == _lockIndex) {
                 percent += shares[i].sharePercent;
@@ -173,6 +186,12 @@ contract Locker is LockerTypes {
 
     function _getUsersShares(address _user) internal view returns (RegistryShare[] memory) {
         return registry[_user];
+    }
+
+    function _getVestingsByLockIndex(uint256 _index) internal view returns (VestingRecord[] memory) {
+        VestingRecord[] memory v = _getLockRecordByIndex(_index).vestings;
+        return v;
+
     }
 
     function _getLockRecordByIndex(uint256 _index) internal view returns (LockStorageRecord memory){

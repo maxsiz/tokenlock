@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: MIT
-// Degen'$ Farm: Collectible NFT game (https://degens.farm)
 pragma solidity ^0.8.2;
 
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC1155/ERC1155.sol";
