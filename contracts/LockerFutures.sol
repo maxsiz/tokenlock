@@ -42,7 +42,7 @@ contract LockerFutures is Locker {
             amountMint = vr.amountUnlock * percent / 100;
             IERC1155mintable(futuresERC1155).mint(
                 bnfc[i],
-                _getNFTtokenID(_lockIndex, _lockIndex), 
+                _getNFTtokenID(_lockIndex, _vestingIndex),
                 amountMint, 
                 bytes('0')
             );
@@ -50,7 +50,7 @@ contract LockerFutures is Locker {
         //Save nftid in vesting record for exclude amount of this vesting
         //record from available for ordinar claim.
         //from this moment this amount can be claimed only for NFT owner
-        vr.nftId =  _getNFTtokenID(_lockIndex, _lockIndex);
+        vr.nftId =  _getNFTtokenID(_lockIndex, _vestingIndex);
     }
 
     function claimWithNFT(uint256 _tokenId) external {
