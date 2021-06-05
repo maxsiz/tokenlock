@@ -83,6 +83,7 @@ contract Locker is LockerTypes {
 
     function claimTokens(uint256 _lockIndex, uint256 _desiredAmount) external {
         //Lets get our lockRecord by index
+        require(_desiredAmount > 0, "Cant claim zero");
         LockStorageRecord memory lock = lockerStorage[_lockIndex];
         (uint256 percentShares, uint256 wasClaimed) = 
             _getUserSharePercentAndClaimedAmount(msg.sender, _lockIndex);
