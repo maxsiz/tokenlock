@@ -32,15 +32,16 @@ contract Locker is LockerTypes {
         address[] memory _beneficiaries,
         uint256[] memory _beneficiariesShares
 
-    ) 
+    )
         external 
 
     {
+        require(_amount > 0, "Cant lock 0 amount");
         require(IERC20(_ERC20).allowance(msg.sender, address(this)) >= _amount, "Please approve first");
         require(_getArraySum(_unlockAmount) == _amount, "Sum vesting records must be equal lock amount");
         require(_unlockedFrom.length == _unlockAmount.length, "Length of periods and amounts arrays must be equal");
         require(_beneficiaries.length == _beneficiariesShares.length, "Length of beneficiaries and shares arrays must be equal");
-
+        require(_getArraySum(_beneficiariesShares) == 100, "Sum of shares array must be equal to 100%");
         
         //Lets prepare vestings array
         VestingRecord[] memory v = new VestingRecord[](_unlockedFrom.length);
