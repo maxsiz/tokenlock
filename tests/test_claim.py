@@ -14,7 +14,7 @@ def test_claim_token(accounts, locker, projecttoken):
         [chain.time() + 100, chain.time() + 200, chain.time() - 300],
         [10e18, 20e18, 70e18],
         [accounts[1], accounts[2], accounts[3]],
-        [10, 20, 30],
+        [10, 20, 70],
         {'from': accounts[0]}
     )
 

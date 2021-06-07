@@ -14,7 +14,7 @@ def test_lock_for_newLock_event(accounts, nulltoken, locker):
         [chain.time() + 100, chain.time() + 200, chain.time() + 300],
         [10e18, 20e18, 70e18],
         [accounts[1], accounts[2], accounts[3]],
-        [0, 0, 0],
+        [10, 20, 70],
         {'from': accounts[0]}
     )
     assert len(lockTX.events) >= 1

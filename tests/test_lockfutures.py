@@ -15,7 +15,7 @@ def test_mint_futures_nft(accounts, lockfutures, projecttoken):
             [chain.time() + 2000000, chain.time() + 200, chain.time() + 2000000],
             [10e18, 20e18, 70e18],
             [accounts[1], accounts[2], accounts[3]],
-            [10, 20, 30],
+            [10, 20, 70],
             {'from': accounts[0]}
         )
         logging.info(lockfutures.getLockRecordByIndex(0))
