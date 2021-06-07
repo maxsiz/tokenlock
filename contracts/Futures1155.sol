@@ -15,9 +15,8 @@ contract Futures1155 is ERC1155 {
      * https://eips.ethereum.org/EIPS/eip-1155#metadata
      * 
      */
-    constructor (string memory uri_, address _locker) ERC1155(uri_) {
-        locker = _locker;
-        
+    constructor (string memory uri_) ERC1155(uri_) {
+               
     }
 
     function mint(address account, uint256 id, uint256 amount, bytes memory data) external {

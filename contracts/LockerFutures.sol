@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-//import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/access/Ownable.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/access/Ownable.sol";
 //import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC1155/IERC1155.sol";
 import "./LockerType.sol";
 import "./Locker.sol";
@@ -8,13 +8,13 @@ import "../interfaces/IERC1155mintable.sol";
 
 pragma solidity ^0.8.2;
 
-contract LockerFutures is Locker {
+contract LockerFutures is Locker, Ownable {
     using SafeERC20 for IERC20;
 
     uint256 constant DELAY_FOR_FUTURES_ISSUANCE = 1 days;
     uint256 constant LOCK_ID_SCALE = 1e18; 
 
-    address immutable futuresERC1155;
+    address public futuresERC1155;
 
     // constructor (address _erc1155) {
     //     require(_erc1155 != address(0));
@@ -38,7 +38,7 @@ contract LockerFutures is Locker {
         uint256 percent;
         uint256 claimed;
         (percent, claimed) = _getUserSharePercentAndClaimedAmount(msg.sender, _lockIndex);
-        require(percent > 0, "Sender has balance in this lock");
+        require(percent > 0, "Sender has no balance in this lock");
         require(claimed == 0, "Distribution was started");
 
         //TODO  may be need more checks
@@ -77,6 +77,13 @@ contract LockerFutures is Locker {
             msg.sender,  
             IERC1155mintable(futuresERC1155).balanceOf(msg.sender, _tokenId)
         );
+    }
+    ///////////////////////////////////////////////////////////
+    /////   Admin functions                                 ///
+    ///////////////////////////////////////////////////////////
+    function setFuturesERC1155(address _erc1155) external onlyOwner {
+        require(_erc1155 != address(0), "Cant set zero address");
+        futuresERC1155 = _erc1155;
     }
 
     ////////////////////////////////////////////////////////////

@@ -19,6 +19,12 @@ def locker(accounts, Locker):
 
 
 @pytest.fixture(scope="module")
-def lockfutures(accounts, LockerFutures):
-    lockfutures = accounts[0].deploy(LockerFutures, '0xFbD588c72B438faD4Cf7cD879c8F730Faa213Da0')
+def erc1155(accounts, Futures1155):
+    e = accounts[0].deploy(Futures1155, "https://nft.iber.group/degenfarm/V1/locks")
+    yield e
+
+@pytest.fixture(scope="module")
+def lockfutures(accounts, LockerFutures, erc1155):
+    lockfutures = accounts[0].deploy(LockerFutures)
+    lockfutures.setFuturesERC1155(erc1155.address)
     yield lockfutures
