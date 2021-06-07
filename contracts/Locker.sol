@@ -18,7 +18,7 @@ contract Locker is LockerTypes {
     //map from users(investors)  to locked shares
     mapping(address => RegistryShare[])  public registry;
 
-    //map form lockIndex to beneficiaries list
+    //map from lockIndex to beneficiaries list
     mapping(uint256 => address[]) beneficiariesInLock;
 
     event NewLock(address indexed erc20, address indexed who, uint256 lockedAmount, uint256 lockId);
@@ -180,6 +180,8 @@ contract Locker is LockerTypes {
         RegistryShare[] memory shares = registry[_user];
         for (uint256 i = 0; i < shares.length; i ++ ) {
             if  (shares[i].lockIndex == _lockIndex) {
+                //We do this cycle because one adress can exist
+                //more then once in one lock
                 percent += shares[i].sharePercent;
                 claimed += shares[i].claimedAmount;
             }

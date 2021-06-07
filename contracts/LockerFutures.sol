@@ -16,10 +16,10 @@ contract LockerFutures is Locker {
 
     address immutable futuresERC1155;
 
-    constructor (address _erc1155) {
-        require(_erc1155 != address(0));
-        futuresERC1155 = _erc1155;
-    }
+    // constructor (address _erc1155) {
+    //     require(_erc1155 != address(0));
+    //     futuresERC1155 = _erc1155;
+    // }
     
 
     function emitFutures(uint256 _lockIndex, uint256 _vestingIndex) 
@@ -31,12 +31,21 @@ contract LockerFutures is Locker {
              "To late for this vesting"
         );
         require(vr.nftId == 0, "This futures already issued");
+        
+        //Check that tx.sender have none zero share in this lock
+        //to be authorize for mint NFT 
+        
+        uint256 percent;
+        uint256 claimed;
+        (percent, claimed) = _getUserSharePercentAndClaimedAmount(msg.sender, _lockIndex);
+        require(percent > 0, "Sender has balance in this lock");
+        require(claimed == 0, "Distribution was started");
+
         //TODO  may be need more checks
 
         //lets mint nft
         address[] memory bnfc = beneficiariesInLock[_lockIndex];
-        uint256 amountMint;
-        uint256 percent; 
+        uint256 amountMint; 
         for (uint256 i = 0; i < bnfc.length; i ++) {
             (percent, ) = _getUserSharePercentAndClaimedAmount(bnfc[i], _lockIndex);
             amountMint = vr.amountUnlock * percent / 100;
