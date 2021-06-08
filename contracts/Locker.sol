@@ -13,6 +13,7 @@ contract Locker is LockerTypes {
 
     string  constant name = "Lock & Registry v0.0.1"; 
     uint256 constant MAX_VESTING_RECORDS_PER_LOCK = 250;
+    uint256 constant TOTAL_IN_PERCENT = 10000;
     LockStorageRecord[] lockerStorage;
 
     //map from users(investors)  to locked shares
@@ -41,7 +42,7 @@ contract Locker is LockerTypes {
         require(_getArraySum(_unlockAmount) == _amount, "Sum vesting records must be equal lock amount");
         require(_unlockedFrom.length == _unlockAmount.length, "Length of periods and amounts arrays must be equal");
         require(_beneficiaries.length == _beneficiariesShares.length, "Length of beneficiaries and shares arrays must be equal");
-        require(_getArraySum(_beneficiariesShares) == 100, "Sum of shares array must be equal to 100%");
+        require(_getArraySum(_beneficiariesShares) == TOTAL_IN_PERCENT, "Sum of shares array must be equal to 100%");
         
         //Lets prepare vestings array
         VestingRecord[] memory v = new VestingRecord[](_unlockedFrom.length);
@@ -91,7 +92,7 @@ contract Locker is LockerTypes {
         uint256 availableAmount =
             //TODO check for small values 
             _getAvailableAmountByLockIndex(_lockIndex)
-            * percentShares / 100
+            * percentShares / TOTAL_IN_PERCENT
             - wasClaimed;
 
         if  (_desiredAmount != 0) {
@@ -193,6 +194,7 @@ contract Locker is LockerTypes {
     function _getUsersShares(address _user) internal view returns (RegistryShare[] memory) {
         return registry[_user];
     }
+
 
     function _getVestingsByLockIndex(uint256 _index) internal view returns (VestingRecord[] memory) {
         VestingRecord[] memory v = _getLockRecordByIndex(_index).vestings;

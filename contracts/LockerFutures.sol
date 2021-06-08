@@ -48,7 +48,7 @@ contract LockerFutures is Locker, Ownable {
         uint256 amountMint; 
         for (uint256 i = 0; i < bnfc.length; i ++) {
             (percent, ) = _getUserSharePercentAndClaimedAmount(bnfc[i], _lockIndex);
-            amountMint = vr.amountUnlock * percent / 100;
+            amountMint = vr.amountUnlock * percent / TOTAL_IN_PERCENT;
             IERC1155mintable(futuresERC1155).mint(
                 bnfc[i],
                 _getNFTtokenID(_lockIndex, _vestingIndex),
