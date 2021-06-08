@@ -15,8 +15,8 @@ def test_lock(accounts, projecttoken, locker):
         [chain.time() + 100 , chain.time() + 200, chain.time() + 300 ],
         [10e18,20e18,70e18],
         [accounts[1],accounts[1],accounts[3]],
-        [10,20,70],
-        {'from':accounts[0]}
+        [1000, 2000, 7000],
+        {'from': accounts[0]}
         )
 
     projecttoken.approve(locker.address, projecttoken.balanceOf(accounts[0]), {'from':accounts[0]})
@@ -26,7 +26,7 @@ def test_lock(accounts, projecttoken, locker):
         [chain.time() + 100, chain.time() + 200, chain.time() + 300],
         [10e18, 20e18, 70e18],
         [accounts[1], accounts[2], accounts[3]],
-        [10, 20, 70],
+        [1000, 2000, 7000],
         {'from': accounts[0]}
     )
 

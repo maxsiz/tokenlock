@@ -13,8 +13,8 @@ def test_claim_token(accounts, locker, projecttoken):
         LOCKED_AMOUNT,
         [chain.time() + 100, chain.time() + 200, chain.time() - 300],
         [10e18, 20e18, 70e18],
-        [accounts[1], accounts[2], accounts[3]],
-        [10, 20, 70],
+        [accounts[4], accounts[5], accounts[6], accounts[1]],
+        [1250, 1250, 7414, 86],
         {'from': accounts[0]}
     )
 
@@ -24,10 +24,10 @@ def test_claim_token(accounts, locker, projecttoken):
     with reverts("Cant claim zero"):
         locker.claimTokens(0, 0, {'from': accounts[1]})
 
-    locker.claimTokens(0, 100, {'from': accounts[3]})
+    locker.claimTokens(0, 100, {'from': accounts[1]})
 
-    locker.claimTokens(0, 200, {'from': accounts[3]})
+    locker.claimTokens(0, 200, {'from': accounts[1]})
 
-    assert projecttoken.balanceOf(accounts[3]) == 300
+    assert projecttoken.balanceOf(accounts[1]) == 300
 
 

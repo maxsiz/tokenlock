@@ -18,7 +18,7 @@ def test_locks(accounts, projecttoken, locker):
             [chain.time()+100, chain.time()+200, chain.time()+300],
             [0, 0, 0],
             [accounts[4], accounts[5], accounts[6]],
-            [10, 20, 70],
+            [1000, 2000, 7000],
             {'from': accounts[0]}
         )
     with reverts("Length of periods and amounts arrays must be equal"):
@@ -28,7 +28,7 @@ def test_locks(accounts, projecttoken, locker):
             [chain.time() + 300],
             [10e18, 20e18, 70e18],
             [accounts[4], accounts[5], accounts[6]],
-            [10, 20, 70],
+            [1000, 2000, 7000],
             {'from': accounts[0]}
         )
 
@@ -49,7 +49,7 @@ def test_locks(accounts, projecttoken, locker):
             [chain.time()+100, chain.time() + 200, chain.time() + 300],
             [0,0, 0],
             [accounts[1], accounts[2], accounts[3]],
-            [10, 20, 70],
+            [1000, 2000, 7000],
             {'from': accounts[0]}
         )
 
@@ -71,7 +71,7 @@ def test_locks_double_lock(accounts, projecttoken, locker):
         [chain.time() + 100, chain.time() + 200, chain.time() + 300],
         [10e18, 20e18, 70e18],
         [accounts[4], accounts[5], accounts[6]],
-        [10, 20, 70],
+        [1000, 2000, 7000],
         {'from': accounts[0]}
     )
 
@@ -81,7 +81,7 @@ def test_locks_double_lock(accounts, projecttoken, locker):
         [chain.time() + 100, chain.time() + 200, chain.time() + 300],
         [10e18, 20e18, 70e18],
         [accounts[4], accounts[5], accounts[6]],
-        [10, 20, 70],
+        [1000, 2000, 7000],
         {'from': accounts[0]}
     )
     logging.info('registry for account[4]={}'.format(locker.registry(accounts[4], 0)))
@@ -91,6 +91,17 @@ def test_locks_double_lock(accounts, projecttoken, locker):
 # testing lock function for zero amount
 def test_locks_zero_amounts(accounts, nulltoken, locker):
     nulltoken.approve(locker.address, nulltoken.balanceOf(accounts[0]), {'from': accounts[0]})
+    locker.lockTokens(
+        nulltoken.address,
+        LOCKED_AMOUNT,
+        [chain.time() + 100, chain.time() + 200, chain.time() + 300],
+        [10e18, 20e18, 70e18],
+        [accounts[4], accounts[5], accounts[6], accounts[1]],
+        [1250, 1250, 7414, 86],
+        {'from': accounts[0]}
+    )
+
+    logging.info(locker.getMyShares({'from' : accounts[1]}))
 
 
 
@@ -103,7 +114,7 @@ def generate_random_amounts(maxAmount):
     return  amounts
 
 def generate_random_beneficiaries(maxAmount):
-    shares = 100 / maxAmount
+    shares = 10000 / maxAmount
     shareArray = []
     for i in range(maxAmount):
         shareArray.append(shares)
