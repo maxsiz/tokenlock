@@ -1,13 +1,18 @@
 // SPDX-License-Identifier: MIT
+
+
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/IERC20.sol";
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/utils/SafeERC20.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC1155/IERC1155.sol";
+import "./FuturesMarketOrdersHolder.sol";
+
 
 pragma solidity ^0.8.2;
 
-import "./LockerFutures.sol";
 
+contract FuturesMarket is FuturesMarketHolder {
 
-contract FuturesMarket is LockerFutures, FuturesMarketHolder {
+    using SafeERC20 for IERC20;
 
     enum State {ACTIVE, CANCELED, SOLD}
 
@@ -18,19 +23,18 @@ contract FuturesMarket is LockerFutures, FuturesMarketHolder {
    }
 
 
-    mapping(byte32 => OrdersParam) internal orders;
+    mapping(bytes32 => OrdersParam) internal orders;
 
     event Listed(address owner, uint256  _tokenId);
     event Cancel(address owner, uint256  _tokenId);
-    event Buy();
-
+//    event Buy();
 
 
     // list to futures market
     function addOrder(FuturesMarket.Order calldata order) external {
         require(msg.sender == order.key.owner, "order could be added by token owner only");
-        require(IERC1155mintable(futuresERC1155).balanceOf(msg.sender, order.key.sellAsset.tokenId) > 0, "Your future balance is zero");
-        byte32 key = prepareKey(order);
+        require(IERC1155(order.key.sellAsset.token).balanceOf(msg.sender, order.key.sellAsset.tokenId) > 0, "Your future balance is zero");
+        bytes32 key = prepareKey(order);
         orders[key] = OrdersParam(order.buying, msg.sender, State.ACTIVE);
         uint256 tokenId = order.key.sellAsset.tokenId;
 //        IERC1155mintable(futuresERC1155).safeTransferFrom(msg,sender, address(this), tokenId, IERC1155mintable(futuresERC1155).balanceOf(msg.sender, tokenId), bytes('0'));
@@ -42,7 +46,7 @@ contract FuturesMarket is LockerFutures, FuturesMarketHolder {
     function cancel(FuturesMarket.Order calldata order) external {
         require(msg.sender == order.key.owner, "order could be canceled only by token owner");
 
-        byte32 key = prepareKey(order);
+        bytes32 key = prepareKey(order);
         orders[key] = OrdersParam(order.buying, msg.sender, State.CANCELED);
         uint256 tokenId = order.key.sellAsset.tokenId;
 //        IERC1155mintable(futuresERC1155).safeTransferFrom(address(this), msg.sender, tokenId, IERC1155mintable(futuresERC1155).balanceOf(address(this), tokenId), bytes('0'));
@@ -52,9 +56,9 @@ contract FuturesMarket is LockerFutures, FuturesMarketHolder {
 
 
     // accept ethereum
-    function buyFutures(FuturesMarket.Order calldata order, uint amount) public payable returns (bool) {
+    function buyFutures(FuturesMarket.Order calldata order, uint amount) payable external {
 
-        byte32 key = prepareKey(order);
+        bytes32 key = prepareKey(order);
         OrdersParam storage ordersParam = orders[key];
         if (order.key.buyAsset.assetType == AssetType.ETH) {
             require(msg.value == ordersParam.buying);
@@ -64,7 +68,7 @@ contract FuturesMarket is LockerFutures, FuturesMarketHolder {
 
         transfer(order.key.sellAsset, amount, order.key.owner, msg.sender);
         transfer(order.key.buyAsset, amount, order.key.owner, msg.sender);
-        orders[key] = OrdersParam(State.SOLD);
+        orders[key] = OrdersParam(order.buying, msg.sender,State.SOLD);
 
     }
 
@@ -73,17 +77,24 @@ contract FuturesMarket is LockerFutures, FuturesMarketHolder {
 
     function transfer(Asset memory asset, uint value, address from, address to) internal {
             if(asset.assetType == AssetType.ETH) {
-                address payable toPayable = address(uint160(to));
+                address payable toPayable = payable(address(to));
                 toPayable.transfer(value);
-            } else if (asset.assetType.ERC20) {
+            } else if (asset.assetType == AssetType.ERC20) {
                 require(asset.tokenId == 0, "tokenId should be 0");
                 IERC20 token = IERC20(asset.token);
                 token.safeTransferFrom(from, to, value);
             }else {
-                IERC1155mintable(futuresERC1155).safeTransferFrom(from, to, asset.tokenId, IERC1155mintable(futuresERC1155).balanceOf(from, asset.tokenId), bytes('0'));
+                   IERC1155 token = IERC1155(asset.token);
+                    token.safeTransferFrom(from, to, asset.tokenId, token.balanceOf(from, asset.tokenId), bytes('0'));
+//                IERC1155mintable(futuresERC1155).safeTransferFrom(from, to, asset.tokenId, IERC1155mintable(futuresERC1155).balanceOf(from, asset.tokenId), bytes('0'));
             }
 
     }
+
+
+//    function erc1155safeTransferFrom(ERC1155 token, address from, address to, uint256 id, uint256 value, bytes calldata data) internal {
+//        token.transferFrom(from, to, id, value, data)
+//    }
 
 
      function prepareKey(FuturesMarket.Order memory order) internal pure returns (bytes32) {
@@ -96,5 +107,8 @@ contract FuturesMarket is LockerFutures, FuturesMarketHolder {
                 order.key.salt
             ));
     }
+
+
+
 
 }
