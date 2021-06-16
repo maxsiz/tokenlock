@@ -10,3 +10,4 @@ virutalenv
 .virutalenv
 venv
 .pytest_cache
+.env

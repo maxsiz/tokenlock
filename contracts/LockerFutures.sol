@@ -1,12 +1,16 @@
 // SPDX-License-Identifier: MIT
+pragma solidity ^0.8.4;
 
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/access/Ownable.sol";
-//import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC1155/IERC1155.sol";
-import "./LockerType.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC1155/IERC1155.sol";
+//import "./LockerTypes.sol";
 import "./Locker.sol";
-import "../interfaces/IERC1155mintable.sol";
 
-pragma solidity ^0.8.2;
+interface  IERC1155Mintable is IERC1155 {
+    function mint(address account, uint256 id, uint256 amount, bytes memory data) external;
+    function burn(address account, uint256 id, uint256 amount) external;
+}
+
 
 contract LockerFutures is Locker, Ownable {
     using SafeERC20 for IERC20;
@@ -49,7 +53,7 @@ contract LockerFutures is Locker, Ownable {
         for (uint256 i = 0; i < bnfc.length; i ++) {
             (percent, ) = _getUserSharePercentAndClaimedAmount(bnfc[i], _lockIndex);
             amountMint = vr.amountUnlock * percent / TOTAL_IN_PERCENT;
-            IERC1155mintable(futuresERC1155).mint(
+            IERC1155Mintable(futuresERC1155).mint(
                 bnfc[i],
                 _getNFTtokenID(_lockIndex, _vestingIndex),
                 amountMint, 
@@ -64,7 +68,7 @@ contract LockerFutures is Locker, Ownable {
 
     function claimWithNFT(uint256 _tokenId) external {
         require(
-            IERC1155mintable(futuresERC1155).balanceOf(msg.sender, _tokenId) > 0,
+            IERC1155Mintable(futuresERC1155).balanceOf(msg.sender, _tokenId) > 0,
             "Your futures balance is zero"
         );
         //Lets get ERC20 address of lock of this futures
@@ -75,7 +79,7 @@ contract LockerFutures is Locker, Ownable {
         IERC20 token = IERC20(token20);
         token.safeTransfer(
             msg.sender,  
-            IERC1155mintable(futuresERC1155).balanceOf(msg.sender, _tokenId)
+            IERC1155Mintable(futuresERC1155).balanceOf(msg.sender, _tokenId)
         );
     }
     ///////////////////////////////////////////////////////////
