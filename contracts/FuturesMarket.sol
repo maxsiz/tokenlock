@@ -17,7 +17,7 @@ contract FuturesMarket is FuturesMarketHolder {
     enum State {ACTIVE, CANCELED, SOLD}
 
    struct OrdersParam {
-       uint buying;
+       uint256 buying;
        address owner;
        State state;
    }

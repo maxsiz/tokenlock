@@ -1,4 +1,5 @@
 import pytest
+import logging
 
 
 @pytest.fixture(scope="module")
@@ -25,6 +26,12 @@ def lockfutures(accounts, LockerFutures):
 
 @pytest.fixture(scope="module")
 def erc1155(accounts, Futures1155, lockfutures):
-    e = accounts[0].deploy(Futures1155, "https://nft.iber.group/degenfarm/V1/locks", lockfutures.address)
+    erc1155 = accounts[0].deploy(Futures1155, "https://nft.iber.group/degenfarm/V1/locks", lockfutures.address)
     lockfutures.setFuturesERC1155(erc1155.address)
-    yield e
+    yield erc1155
+
+
+@pytest.fixture(scope="module")
+def futuresmarket(accounts, FuturesMarket, erc1155, lockfutures):
+    futuresmarket = accounts[0].deploy(FuturesMarket)
+    yield futuresmarket

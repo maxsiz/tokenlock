@@ -7,7 +7,7 @@ LOGGER = logging.getLogger(__name__)
 LOCKED_AMOUNT = 100e18
 
 
-def test_mint_futures_nft(accounts, lockfutures, projecttoken):
+def test_mint_futures_nft(accounts, lockfutures, projecttoken, erc1155):
         projecttoken.approve(lockfutures.address, projecttoken.balanceOf(accounts[0], {'from': accounts[0]}))
         lockfutures.lockTokens(
             projecttoken.address,
@@ -18,11 +18,13 @@ def test_mint_futures_nft(accounts, lockfutures, projecttoken):
             [1000, 2000, 7000],
             {'from': accounts[0]}
         )
+        # lockfutures.setFuturesERC1155(erc1155.address, {'from': accounts[0]})
         logging.info(lockfutures.getLockRecordByIndex(0))
         with reverts("To late for this vesting"):
             lockfutures.emitFutures(0, 1, {'from': accounts[2]})
 
         lockfutures.emitFutures(0, 2, {'from': accounts[3]})
+        logging.info(erc1155.balanceOf(accounts[1],2))
 
         with reverts("This futures already issued"):
             lockfutures.emitFutures(0, 2, {'from': accounts[3]})
