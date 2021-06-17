@@ -8,5 +8,5 @@ virutalenv
 .idea
 .vscode
 .virutalenv
-venv
+.env
 .pytest_cache
