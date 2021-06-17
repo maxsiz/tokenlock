@@ -57,8 +57,6 @@ contract Locker is LockerTypes {
         lock.token = _ERC20;
         lock.amount = _amount;
 
-        //Save beneficaries in one map
-        beneficiariesInLock[lockerStorage.length - 1];
 
         //Copying of type struct LockerTypes.VestingRecord memory[] memory 
         //to storage not yet supported.
@@ -75,6 +73,8 @@ contract Locker is LockerTypes {
                 sharePercent: _beneficiariesShares[i],
                 claimedAmount: 0
             }));
+            //Save beneficaries in one map
+            beneficiariesInLock[lockerStorage.length - 1].push(_beneficiaries[i]);
         }
 
         
