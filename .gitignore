@@ -9,4 +9,5 @@ virutalenv
 .vscode
 .virutalenv
 .env
+venv/
 .pytest_cache
