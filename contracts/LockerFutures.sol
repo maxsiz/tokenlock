@@ -18,6 +18,8 @@ contract LockerFutures is Locker, Ownable {
 
     address public futuresERC1155;
 
+    mapping(uint256 => uint256[]) indexes;
+
    function emitFutures(uint256 _lockIndex, uint256 _vestingIndex) 
         external 
         returns (uint256)
@@ -56,6 +58,9 @@ contract LockerFutures is Locker, Ownable {
         //record from available for ordinar claim.
         //from this moment this amount can be claimed only for NFT owner
         vr.nftId =  _getNFTtokenID(_lockIndex, _vestingIndex);
+
+        indexes[vr.nftId].push(_lockIndex);
+        indexes[vr.nftId].push(_vestingIndex);
     }
 
     function claimWithNFT(uint256 _tokenId) external {
@@ -63,9 +68,16 @@ contract LockerFutures is Locker, Ownable {
             IERC1155mintable(futuresERC1155).balanceOf(msg.sender, _tokenId) > 0,
             "Your futures balance is zero"
         );
+
+        uint256[] memory index = indexes[_tokenId];
+        VestingRecord storage vr = lockerStorage[index[0]].vestings[index[1]];
+
+        require(vr.unlockTime <= block.timestamp, 'Claiming NFT insufficient for now');
+
+
         //Lets get ERC20 address of lock of this futures
         IERC20 token20;
-        token20 = IERC20(_getLockRecordByIndex(_tokenId / LOCK_ID_SCALE).token);
+        token20 = IERC20(_getLockRecordByIndex(index[0]).token);
 
         //send tokens
         IERC20 token = IERC20(token20);
@@ -73,6 +85,9 @@ contract LockerFutures is Locker, Ownable {
             msg.sender,  
             IERC1155mintable(futuresERC1155).balanceOf(msg.sender, _tokenId)
         );
+
+        IERC1155mintable(futuresERC1155).burn(
+                msg.sender, _tokenId, IERC1155mintable(futuresERC1155).balanceOf(msg.sender, _tokenId));
     }
     ///////////////////////////////////////////////////////////
     /////   Admin functions                                 ///
