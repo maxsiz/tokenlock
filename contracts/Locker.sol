@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
+// Platinum Software Dev Team
+// Locker  ALFA  version.Testing is in progress.
 
-//import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/access/Ownable.sol";
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/IERC20.sol";
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/utils/SafeERC20.sol";
-//import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC1155/IERC1155.sol";
 import "./LockerType.sol";
 
 pragma solidity ^0.8.2;
@@ -108,19 +108,11 @@ contract Locker is LockerTypes {
         token.safeTransfer(msg.sender, availableAmount);
     }
 
-    // function emitFutures(uint256 _lockIndex, uint256 _vestingIndex) external returns (uint256){
-    //     LockStorageRecord memory lock = lockerStorage[_lockIndex];
-    // }
-
-    // function claimWithNFT(uint256 _tokenId) external {
-
-    // }
 
     function getMyShares() external view returns (RegistryShare[] memory) {
         return _getUsersShares(msg.sender);
     }
 
-    //function getMyLockedVestings() external view returns (RegistryShare[] memory)
 
     function getLockRecordByIndex(uint256 _index) external view returns (LockStorageRecord memory){
         return _getLockRecordByIndex(_index);
@@ -170,7 +162,6 @@ contract Locker is LockerTypes {
                 res += v[i].amountUnlock;
             }
         }
-        // adding return function
         return res;
     }
 

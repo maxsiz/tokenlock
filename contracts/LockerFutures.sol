@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
+// Platinum Software Dev Team
+// Locker  ALFA  version.Testing is in progress.
+
 
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/access/Ownable.sol";
-//import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC1155/IERC1155.sol";
 import "./LockerType.sol";
 import "./Locker.sol";
 import "../interfaces/IERC1155mintable.sol";
@@ -16,13 +18,7 @@ contract LockerFutures is Locker, Ownable {
 
     address public futuresERC1155;
 
-    // constructor (address _erc1155) {
-    //     require(_erc1155 != address(0));
-    //     futuresERC1155 = _erc1155;
-    // }
-    
-
-    function emitFutures(uint256 _lockIndex, uint256 _vestingIndex) 
+   function emitFutures(uint256 _lockIndex, uint256 _vestingIndex) 
         external 
         returns (uint256)
     {
