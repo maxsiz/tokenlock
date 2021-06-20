@@ -113,6 +113,10 @@ contract Locker is LockerTypes {
         return _getUsersShares(user);
     }
 
+    function getUserBalances(address user, uint256 _lockIndex) external view returns (uint256, uint256) {
+        return _getUserBalances(user, _lockIndex);
+    }
+
 
     function getLockRecordByIndex(uint256 _index) external view returns (LockStorageRecord memory){
         return _getLockRecordByIndex(_index);
@@ -187,7 +191,23 @@ contract Locker is LockerTypes {
         return registry[_user];
     }
 
+    function _getUserBalances(address _user, uint256 _lockIndex) internal view returns (uint256, uint256) {
 
+        (uint256 percentShares, uint256 wasClaimed) =
+            _getUserSharePercentAndClaimedAmount(_user, _lockIndex);
+
+        uint256 totalBalance =
+        lockerStorage[_lockIndex].amount
+        * percentShares / TOTAL_IN_PERCENT
+        - wasClaimed;
+
+        uint256 available =
+        _getAvailableAmountByLockIndex(_lockIndex)
+        * percentShares / TOTAL_IN_PERCENT
+        - wasClaimed;
+
+        return (totalBalance, available);
+     }
 
 
     function _getVestingsByLockIndex(uint256 _index) internal view returns (VestingRecord[] memory) {
