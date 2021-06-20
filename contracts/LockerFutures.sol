@@ -18,8 +18,6 @@ contract LockerFutures is Locker, Ownable {
 
     address public futuresERC1155;
 
-    mapping(uint256 => uint256[]) indexes;
-
    function emitFutures(uint256 _lockIndex, uint256 _vestingIndex) 
         external 
         returns (uint256)
