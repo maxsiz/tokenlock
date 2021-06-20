@@ -58,9 +58,6 @@ contract LockerFutures is Locker, Ownable {
         //record from available for ordinar claim.
         //from this moment this amount can be claimed only for NFT owner
         vr.nftId =  _getNFTtokenID(_lockIndex, _vestingIndex);
-
-        indexes[vr.nftId].push(_lockIndex);
-        indexes[vr.nftId].push(_vestingIndex);
     }
 
     function claimWithNFT(uint256 _tokenId) external {
@@ -69,15 +66,16 @@ contract LockerFutures is Locker, Ownable {
             "Your futures balance is zero"
         );
 
-        uint256[] memory index = indexes[_tokenId];
-        VestingRecord storage vr = lockerStorage[index[0]].vestings[index[1]];
+        uint256 _lockIndex = _tokenId / LOCK_ID_SCALE;
+        uint256 _vestingIndex = _tokenId -  (_lockIndex * LOCK_ID_SCALE);
+        VestingRecord storage vr = lockerStorage[_lockIndex].vestings[_vestingIndex];
 
         require(vr.unlockTime <= block.timestamp, 'Claiming NFT insufficient for now');
 
 
         //Lets get ERC20 address of lock of this futures
         IERC20 token20;
-        token20 = IERC20(_getLockRecordByIndex(index[0]).token);
+        token20 = IERC20(_getLockRecordByIndex(_lockIndex).token);
 
         //send tokens
         IERC20 token = IERC20(token20);
@@ -89,6 +87,7 @@ contract LockerFutures is Locker, Ownable {
         IERC1155mintable(futuresERC1155).burn(
                 msg.sender, _tokenId, IERC1155mintable(futuresERC1155).balanceOf(msg.sender, _tokenId));
     }
+
     ///////////////////////////////////////////////////////////
     /////   Admin functions                                 ///
     ///////////////////////////////////////////////////////////
