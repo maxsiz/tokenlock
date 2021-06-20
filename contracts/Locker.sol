@@ -109,8 +109,8 @@ contract Locker is LockerTypes {
     }
 
 
-    function getMyShares() external view returns (RegistryShare[] memory) {
-        return _getUsersShares(msg.sender);
+    function getUserShares(address user) external view returns (RegistryShare[] memory) {
+        return _getUsersShares(user);
     }
 
 
@@ -165,6 +165,7 @@ contract Locker is LockerTypes {
         return res;
     }
 
+
     function _getUserSharePercentAndClaimedAmount(address _user, uint256 _lockIndex) 
         internal 
         view 
@@ -185,6 +186,8 @@ contract Locker is LockerTypes {
     function _getUsersShares(address _user) internal view returns (RegistryShare[] memory) {
         return registry[_user];
     }
+
+
 
 
     function _getVestingsByLockIndex(uint256 _index) internal view returns (VestingRecord[] memory) {
