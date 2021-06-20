@@ -14,7 +14,7 @@ def test_lock(accounts, projecttoken, locker):
         LOCKED_AMOUNT,
         [chain.time() + 100 , chain.time() + 200, chain.time() + 300 ],
         [10e18,20e18,70e18],
-        [accounts[1],accounts[1],accounts[3]],
+        [accounts[1],accounts[2],accounts[3]],
         [1000, 2000, 7000],
         {'from': accounts[0]}
         )
@@ -23,7 +23,7 @@ def test_lock(accounts, projecttoken, locker):
     locker.lockTokens(
         projecttoken.address,
         LOCKED_AMOUNT,
-        [chain.time() + 100, chain.time() + 200, chain.time() + 300],
+        [chain.time() + 100, chain.time() + 20000, chain.time() + 30000],
         [10e18, 20e18, 70e18],
         [accounts[1], accounts[2], accounts[3]],
         [1000, 2000, 7000],
@@ -40,6 +40,9 @@ def test_lock(accounts, projecttoken, locker):
 
 def test_lock_properties(accounts, locker):
     logging.info(locker.getUserShares(accounts[1].address))
+    chain.sleep(100)
+    chain.mine(2)
+    logging.info((locker.getUserBalances(accounts[1], 0)))
     logging.info(locker.getLockRecordByIndex(0))
     assert locker.getLockCount() > 0
     logging.info(locker.getArraySum([10e18,20e18,70e18]))
