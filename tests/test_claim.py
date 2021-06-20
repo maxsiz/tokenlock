@@ -11,7 +11,7 @@ def test_deposit_token(accounts, locker, projecttoken):
     locker.lockTokens(
         projecttoken.address,
         LOCKED_AMOUNT,
-        [chain.time() + 100, chain.time() + 200, chain.time() - 300],
+        [chain.time() + 1000, chain.time() + 2000, chain.time() - 3000],
         [10e18, 20e18, 70e18],
         [accounts[4], accounts[5], accounts[6], accounts[1]],
         [1250, 1250, 7414, 86],
@@ -43,15 +43,32 @@ def test_claim_tokens(accounts, locker, projecttoken):
 
 
 def test_claim_all(accounts, locker, projecttoken):
-    chain.sleep(100)
+    chain.sleep(400)
+    chain.mine(1)
+    locker.claimTokens(0, 8.75e18, {'from': accounts[5]})
+
+    with reverts("Insufficient for now"):
+        locker.claimTokens(0, 2.5e18, {'from': accounts[5]})
+
+    chain.sleep(600)
     chain.mine(2)
-    locker.claimTokens(0, 1.10e18, {'from': accounts[5]})
-    chain.sleep(100)
+
+    locker.claimTokens(0, 2.5e18, {'from': accounts[5]})
+    logging.info(projecttoken.balanceOf(accounts[5]))
+
+    chain.sleep(500)
     chain.mine(2)
-    locker.claimTokens(0, 10e18, {'from': accounts[5]})
+
+    with reverts("Insufficient for now"):
+        locker.claimTokens(0, 2.5e18, {'from': accounts[5]})
+
+    chain.sleep(500)
+    chain.mine(2)
+
+    locker.claimTokens(0, 1.25e18, {'from': accounts[5]})
     logging.info(projecttoken.balanceOf(accounts[5]))
 
 
-    assert projecttoken.balanceOf(accounts[5]) == 10e18 + 1.10e18
+    assert projecttoken.balanceOf(accounts[5]) == (100e18 * 1250) / 10000
 
 

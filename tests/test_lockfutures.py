@@ -57,6 +57,7 @@ def test_claim_futures(accounts, lockfutures, projecttoken, erc1155):
     assert erc1155.balanceOf(accounts[1],2) == 0
 
 
+
 def test_future_setter(accounts, lockfutures):
 
     with reverts("Cant set zero address"):
@@ -64,3 +65,4 @@ def test_future_setter(accounts, lockfutures):
 
     with reverts("Ownable: caller is not the owner"):
         lockfutures.setFuturesERC1155(accounts[2], {'from': accounts[2]})
+

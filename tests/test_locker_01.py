@@ -39,7 +39,7 @@ def test_lock(accounts, projecttoken, locker):
 
 
 def test_lock_properties(accounts, locker):
-    logging.info(locker.getMyShares({'from': accounts[1]}))
+    logging.info(locker.getUserShares(accounts[1].address))
     logging.info(locker.getLockRecordByIndex(0))
     assert locker.getLockCount() > 0
     logging.info(locker.getArraySum([10e18,20e18,70e18]))
