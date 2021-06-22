@@ -22,9 +22,25 @@ contract Locker is LockerTypes {
     //map from lockIndex to beneficiaries list
     mapping(uint256 => address[]) beneficiariesInLock;
 
+    
     event NewLock(address indexed erc20, address indexed who, uint256 lockedAmount, uint256 lockId);
     
-
+    /**
+     * @dev Any who have token balance > 0 can lock  it here.
+     *
+     * Emits a NewLock event.
+     *
+     * Requirements:
+     *
+     * - `_ERC20` token rontract addrerss for lock.
+     * - `_amount` amount of tokens to be locked.
+     * - `_unlockedFrom` array of unlock dates in unixtime format.
+     * - `_unlockAmount` array of unlock amounts.
+     * - `_beneficiaries` array of address for beneficiaries.
+     * - `_beneficiariesShares` array of beneficiaries shares, % 
+     * - scaled on 100. so 20% = 2000, 0.1% = 10.
+     * Caller must aprove _ERC20 tokens to this conatrct address befor lock
+     */
     function lockTokens(
         address _ERC20, 
         uint256 _amount, 
@@ -80,17 +96,27 @@ contract Locker is LockerTypes {
         
         IERC20 token = IERC20(_ERC20);
         token.safeTransferFrom(msg.sender, address(this), _amount);
+        emit NewLock(_ERC20, msg.sender, _amount, lockerStorage.length - 1);
 
     }
 
+    /**
+     * @dev Any _beneficiaries can claim their tokens after vesting lock time is expired.
+     *
+     * Requirements:
+     *
+     * - `_lockIndex` array index, number of lock record in  storage. For one project lock case = 0
+     * - `_desiredAmount` amount of tokens to be unlocked. Only after vesting lock time is expired
+     * - If now date less then vesting lock time tx will be revert
+     */
     function claimTokens(uint256 _lockIndex, uint256 _desiredAmount) external {
         //Lets get our lockRecord by index
+        require(_lockIndex < lockerStorage.length, "Lock record not saved yet");
         require(_desiredAmount > 0, "Cant claim zero");
         LockStorageRecord memory lock = lockerStorage[_lockIndex];
         (uint256 percentShares, uint256 wasClaimed) = 
             _getUserSharePercentAndClaimedAmount(msg.sender, _lockIndex);
         uint256 availableAmount =
-            //TODO check for small values 
             _getAvailableAmountByLockIndex(_lockIndex)
             * percentShares / TOTAL_IN_PERCENT
             - wasClaimed;
