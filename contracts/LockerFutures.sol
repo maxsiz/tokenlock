@@ -23,8 +23,15 @@ contract LockerFutures is Locker, Ownable {
     uint256 constant LOCK_ID_SCALE = 1e18; 
 
     address public futuresERC1155;
-
-   function emitFutures(uint256 _lockIndex, uint256 _vestingIndex) 
+    
+    event EmitFutures(
+        address indexed erc20, 
+        address indexed who, 
+        uint256 lockedAmount, 
+        uint256 claimDate
+    );
+    
+    function emitFutures(uint256 _lockIndex, uint256 _vestingIndex) 
         external 
         returns (uint256)
     {
@@ -88,8 +95,8 @@ contract LockerFutures is Locker, Ownable {
             IERC1155Mintable(futuresERC1155).balanceOf(msg.sender, _tokenId)
         );
 
-        IERC1155mintable(futuresERC1155).burn(
-                msg.sender, _tokenId, IERC1155mintable(futuresERC1155).balanceOf(msg.sender, _tokenId));
+        IERC1155Mintable(futuresERC1155).burn(
+                msg.sender, _tokenId, IERC1155Mintable(futuresERC1155).balanceOf(msg.sender, _tokenId));
     }
 
     ///////////////////////////////////////////////////////////

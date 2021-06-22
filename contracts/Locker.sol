@@ -11,7 +11,7 @@ import "./LockerTypes.sol";
 contract Locker is LockerTypes {
     using SafeERC20 for IERC20;
 
-    string  constant name = "Lock & Registry v0.0.1"; 
+    string  constant name = "Lock & Registry v0.0.2"; 
     uint256 constant MAX_VESTING_RECORDS_PER_LOCK = 250;
     uint256 constant TOTAL_IN_PERCENT = 10000;
     LockStorageRecord[] lockerStorage;
@@ -23,7 +23,7 @@ contract Locker is LockerTypes {
     mapping(uint256 => address[]) beneficiariesInLock;
 
     event NewLock(address indexed erc20, address indexed who, uint256 lockedAmount, uint256 lockId);
-    event EmitFutures(address indexed erc20, address indexed who, uint256 lockedAmount, uint256 claimDate);
+    
 
     function lockTokens(
         address _ERC20, 
