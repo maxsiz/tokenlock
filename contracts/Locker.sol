@@ -134,7 +134,7 @@ contract Locker is LockerTypes {
     /////////// Internals           ////////////////////////////
     ////////////////////////////////////////////////////////////
     function _decreaseAvailableAmount(address user, uint256 _lockIndex, uint256 _amount) internal {
-        RegistryShare[] storage shares = registry[msg.sender];
+        RegistryShare[] storage shares = registry[user];
         for (uint256 i = 0; i < shares.length; i ++ ) {
             if  (shares[i].lockIndex == _lockIndex) {
                 //It does not matter what record will update
