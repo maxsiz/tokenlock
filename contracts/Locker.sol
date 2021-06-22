@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 // Platinum Software Dev Team
-// Locker  ALFA  version.Testing is in progress.
+// Locker  Beta  version.
 
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/IERC20.sol";
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/utils/SafeERC20.sol";
