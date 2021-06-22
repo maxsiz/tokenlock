@@ -19,7 +19,7 @@ def test_deposit_token(accounts, locker, projecttoken):
     )
     logging.info(projecttoken.balanceOf(locker.address))
 def test_claim_tokens(accounts, locker, projecttoken):
-    with reverts("Index out of range"):
+    with reverts("Lock record not saved yet"):
         locker.claimTokens(3, 10e18, {'from': accounts[1]})
 
     with reverts("Insufficient for now"):
