@@ -1,9 +1,13 @@
 // SPDX-License-Identifier: MIT
+// Platinum Software Dev Team
+// Locker  ALFA  version.Testing is in progress.
+
 pragma solidity ^0.8.4;
 
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/access/Ownable.sol";
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC1155/IERC1155.sol";
-//import "./LockerTypes.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/access/Ownable.sol";
+import "./LockerTypes.sol";
 import "./Locker.sol";
 
 interface  IERC1155Mintable is IERC1155 {
@@ -20,13 +24,7 @@ contract LockerFutures is Locker, Ownable {
 
     address public futuresERC1155;
 
-    // constructor (address _erc1155) {
-    //     require(_erc1155 != address(0));
-    //     futuresERC1155 = _erc1155;
-    // }
-    
-
-    function emitFutures(uint256 _lockIndex, uint256 _vestingIndex) 
+   function emitFutures(uint256 _lockIndex, uint256 _vestingIndex) 
         external 
         returns (uint256)
     {
@@ -71,9 +69,17 @@ contract LockerFutures is Locker, Ownable {
             IERC1155Mintable(futuresERC1155).balanceOf(msg.sender, _tokenId) > 0,
             "Your futures balance is zero"
         );
+
+        uint256 _lockIndex = _tokenId / LOCK_ID_SCALE;
+        uint256 _vestingIndex = _tokenId -  (_lockIndex * LOCK_ID_SCALE);
+        VestingRecord storage vr = lockerStorage[_lockIndex].vestings[_vestingIndex];
+
+        require(vr.unlockTime <= block.timestamp, 'Claiming NFT insufficient for now');
+
+
         //Lets get ERC20 address of lock of this futures
         IERC20 token20;
-        token20 = IERC20(_getLockRecordByIndex(_tokenId / LOCK_ID_SCALE).token);
+        token20 = IERC20(_getLockRecordByIndex(_lockIndex).token);
 
         //send tokens
         IERC20 token = IERC20(token20);
@@ -81,7 +87,11 @@ contract LockerFutures is Locker, Ownable {
             msg.sender,  
             IERC1155Mintable(futuresERC1155).balanceOf(msg.sender, _tokenId)
         );
+
+        IERC1155mintable(futuresERC1155).burn(
+                msg.sender, _tokenId, IERC1155mintable(futuresERC1155).balanceOf(msg.sender, _tokenId));
     }
+
     ///////////////////////////////////////////////////////////
     /////   Admin functions                                 ///
     ///////////////////////////////////////////////////////////

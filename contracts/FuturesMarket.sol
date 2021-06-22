@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+pragma solidity ^0.8.2;
 
 
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/IERC20.sol";
@@ -7,7 +8,6 @@ import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC1155/IERC11
 import "./FuturesMarketOrdersHolder.sol";
 
 
-pragma solidity ^0.8.2;
 
 
 contract FuturesMarket is FuturesMarketHolder {
@@ -17,7 +17,7 @@ contract FuturesMarket is FuturesMarketHolder {
     enum State {ACTIVE, CANCELED, SOLD}
 
    struct OrdersParam {
-       uint buying;
+       uint256 buying;
        address owner;
        State state;
    }
@@ -34,6 +34,9 @@ contract FuturesMarket is FuturesMarketHolder {
     function addOrder(FuturesMarket.Order calldata order) external {
         require(msg.sender == order.key.owner, "order could be added by token owner only");
         require(IERC1155(order.key.sellAsset.token).balanceOf(msg.sender, order.key.sellAsset.tokenId) > 0, "Your future balance is zero");
+        require(IERC1155(order.key.sellAsset.token).isApprovedForAll(msg.sender, address(this)), "Please Approve First");
+
+
         bytes32 key = prepareKey(order);
         orders[key] = OrdersParam(order.buying, msg.sender, State.ACTIVE);
         uint256 tokenId = order.key.sellAsset.tokenId;
@@ -61,13 +64,13 @@ contract FuturesMarket is FuturesMarketHolder {
         bytes32 key = prepareKey(order);
         OrdersParam storage ordersParam = orders[key];
         if (order.key.buyAsset.assetType == AssetType.ETH) {
-            require(msg.value == ordersParam.buying);
+            require(msg.value == ordersParam.buying, "Error msg value it is not equal");
         }else if (order.key.buyAsset.assetType == AssetType.ERC20) {
-            require(amount == ordersParam.buying);
+            require(amount == ordersParam.buying, "Error amount is not equal");
         }
 
         transfer(order.key.sellAsset, amount, order.key.owner, msg.sender);
-        transfer(order.key.buyAsset, amount, order.key.owner, msg.sender);
+        transfer(order.key.buyAsset, amount, msg.sender, order.key.owner);
         orders[key] = OrdersParam(order.buying, msg.sender,State.SOLD);
 
     }
