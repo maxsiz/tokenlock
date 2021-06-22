@@ -147,21 +147,47 @@ contract Locker is LockerTypes {
         return _getUsersShares(_user);
     }
 
-    
 
+    /**
+     * @dev Returns tuple (totalBalance, available balance).
+     * totalBalance - amount of all user shares minus already claimed
+     * available - user balance that available for NOW, minus already claimed
+     * -
+     * Requirements:
+     *
+     * - `_user` beneficiary address
+     * - `_lockIndex` array index, number of lock record in  storage. For one project lock case = 0
+     */
     function getUserBalances(address _user, uint256 _lockIndex) external view returns (uint256, uint256) {
         return _getUserBalances(_user, _lockIndex);
     }
 
-
+    /**
+     * @dev Returns LockStorageRecord data struture.See LockerTypes.LockStorageRecord description.
+     * -
+     * Requirements:
+     *
+     * - `_index` array index, number of lock record in  storage. For one project lock case = 0
+     */
     function getLockRecordByIndex(uint256 _index) external view returns (LockStorageRecord memory){
         return _getLockRecordByIndex(_index);
     }
 
+    
+    /**
+     * @dev Returns LockStorage Record count, for iteration from app.
+     * 
+     */
     function getLockCount() external view returns (uint256) {
         return lockerStorage.length;
     }
 
+
+
+    /**
+     * @dev Just helper for array summ.
+     * 
+     */
     function getArraySum(uint256[] memory _array) external pure returns (uint256) {
         return _getArraySum(_array);
     }
@@ -214,7 +240,7 @@ contract Locker is LockerTypes {
         RegistryShare[] memory shares = registry[_user];
         for (uint256 i = 0; i < shares.length; i ++ ) {
             if  (shares[i].lockIndex == _lockIndex) {
-                //We do this cycle because one adress can exist
+                //We do this cycle because one address can exist
                 //more then once in one lock
                 percent += shares[i].sharePercent;
                 claimed += shares[i].claimedAmount;
