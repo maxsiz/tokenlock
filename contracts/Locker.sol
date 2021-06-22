@@ -134,13 +134,23 @@ contract Locker is LockerTypes {
         token.safeTransfer(msg.sender, availableAmount);
     }
 
-
-    function getUserShares(address user) external view returns (RegistryShare[] memory) {
-        return _getUsersShares(user);
+    /**
+     * @dev Returns array of shares for user (beneficiary).
+     * See LockerTypes.RegistryShare description.
+     * In case of one project this will only one record
+     * 
+     * Requirements:
+     *
+     * - `_user` beneficiary address
+     */
+    function getUserShares(address _user) external view returns (RegistryShare[] memory) {
+        return _getUsersShares(_user);
     }
 
-    function getUserBalances(address user, uint256 _lockIndex) external view returns (uint256, uint256) {
-        return _getUserBalances(user, _lockIndex);
+    
+
+    function getUserBalances(address _user, uint256 _lockIndex) external view returns (uint256, uint256) {
+        return _getUserBalances(_user, _lockIndex);
     }
 
 
