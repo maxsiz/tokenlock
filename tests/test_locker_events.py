@@ -19,4 +19,4 @@ def test_lock_for_newLock_event(accounts, nulltoken, locker):
     )
     assert len(lockTX.events) >= 1
     # there is no NewLock event emitted
-    #assert lockTX.events["NewLock"].values() == [nulltoken.address, accounts[0], LOCKED_AMOUNT, 4]
+    assert lockTX.events["NewLock"].values() == [nulltoken.address, accounts[0], LOCKED_AMOUNT, 0]
