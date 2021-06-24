@@ -32,14 +32,14 @@ contract Locker is LockerTypes {
      *
      * Requirements:
      *
-     * - `_ERC20` token rontract addrerss for lock.
+     * - `_ERC20` token contract address for lock.
      * - `_amount` amount of tokens to be locked.
      * - `_unlockedFrom` array of unlock dates in unixtime format.
      * - `_unlockAmount` array of unlock amounts.
      * - `_beneficiaries` array of address for beneficiaries.
      * - `_beneficiariesShares` array of beneficiaries shares, % 
      * - scaled on 100. so 20% = 2000, 0.1% = 10.
-     * Caller must aprove _ERC20 tokens to this conatrct address befor lock
+     * Caller must approve _ERC20 tokens to this contract address before lock
      */
     function lockTokens(
         address _ERC20, 
@@ -121,10 +121,8 @@ contract Locker is LockerTypes {
             * percentShares / TOTAL_IN_PERCENT
             - wasClaimed;
 
-        if  (_desiredAmount != 0) {
-            require(_desiredAmount <= availableAmount, "Insufficient for now");
-            availableAmount = _desiredAmount;
-        }
+        require(_desiredAmount <= availableAmount, "Insufficient for now");
+        availableAmount = _desiredAmount;
 
         //update claimed amount
         _decreaseAvailableAmount(msg.sender, _lockIndex, availableAmount);
