@@ -22,6 +22,7 @@ abstract contract LockerTypes {
         uint256 unlockTime;  //only after this moment locked amount will be available
         uint256 amountUnlock;//after unlockTime this amount will be available for all investors according  percentage share
         uint256 nftId; //for use with futeres lock
+        bool isNFT;
     }
 
     //Investor's share record

@@ -39,7 +39,7 @@ contract LockerFutures is Locker, Ownable {
         require(vr.unlockTime > block.timestamp + DELAY_FOR_FUTURES_ISSUANCE, 
              "To late for this vesting"
         );
-        require(vr.nftId == 0, "This futures already issued");
+        require(!vr.isNFT, "This futures already issued");
         
         //Check that tx.sender have none zero share in this lock
         //to be authorize for mint NFT 
@@ -69,6 +69,7 @@ contract LockerFutures is Locker, Ownable {
         //record from available for ordinar claim.
         //from this moment this amount can be claimed only for NFT owner
         vr.nftId =  _getNFTtokenID(_lockIndex, _vestingIndex);
+        vr.isNFT = true;
     }
 
     function claimWithNFT(uint256 _tokenId) external {
