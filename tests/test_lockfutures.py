@@ -33,8 +33,10 @@ def test_mint_futures_nft(accounts, lockfutures, projecttoken, erc1155):
             lockfutures.emitFutures(0, 0, {'from': accounts[0]})
 
         lockfutures.emitFutures(0, 0, {'from': accounts[1]})
-        # ideally it should fail
-        lockfutures.emitFutures(0, 0, {'from': accounts[1]})
+
+        # it should fail
+        with reverts("This futures already issued"):
+            lockfutures.emitFutures(0, 0, {'from': accounts[1]})
 
         logging.info(lockfutures.getLockRecordByIndex(0))
 
