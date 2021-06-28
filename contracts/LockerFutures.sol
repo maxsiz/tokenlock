@@ -68,7 +68,6 @@ contract LockerFutures is Locker, Ownable {
         //Save nftid in vesting record for exclude amount of this vesting
         //record from available for ordinar claim.
         //from this moment this amount can be claimed only for NFT owner
-        vr.nftId =  _getNFTtokenID(_lockIndex, _vestingIndex);
         vr.isNFT = true;
     }
 

@@ -19,8 +19,6 @@ def test_lock_token(accounts, projecttoken, locker):
 
     logging.info(locker.getUserBalances(accounts[1], 0))
 
-
-
     assert projecttoken.balanceOf(locker.address) == LOCKED_AMOUNT
 
 
@@ -55,3 +53,5 @@ def test_lock_claim_by_little(accounts, projecttoken, locker):
     logging.info(projecttoken.balanceOf(accounts[1]))
 
     assert projecttoken.balanceOf(accounts[1]) == availableTo
+
+
