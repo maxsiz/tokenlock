@@ -100,6 +100,14 @@ contract LockerFutures is Locker, Ownable {
                 msg.sender, _tokenId, IERC1155Mintable(futuresERC1155).balanceOf(msg.sender, _tokenId));
     }
 
+
+    function getNFTIdByLockVestingIndexes(uint256 _lockIndex, uint256 _vestingIndex) external view returns (uint256) {
+
+        VestingRecord storage vr = lockerStorage[_lockIndex].vestings[_vestingIndex];
+        require(vr.isNFT, "NFT is not minted yet");
+        return _lockIndex * LOCK_ID_SCALE +_vestingIndex;
+    }
+
     ///////////////////////////////////////////////////////////
     /////   Admin functions                                 ///
     ///////////////////////////////////////////////////////////

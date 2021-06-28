@@ -75,3 +75,12 @@ def test_locker_claim_tokens_check(accounts, lockfutures, erc1155, projecttoken)
     lockfutures.claimWithNFT(0, {'from': accounts[6]})
 
     assert projecttoken.balanceOf(lockfutures.address) == 0
+
+
+def test_futures_nftId(accounts, lockfutures, projecttoken, erc1155):
+
+    with reverts("NFT is not minted yet"):
+        lockfutures.getNFTIdByLockVestingIndexes(0,2)
+
+    logging.info(lockfutures.getNFTIdByLockVestingIndexes(0,0))
+
