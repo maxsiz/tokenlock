@@ -21,7 +21,7 @@ abstract contract LockerTypes {
     struct VestingRecord {
         uint256 unlockTime;  //only after this moment locked amount will be available
         uint256 amountUnlock;//after unlockTime this amount will be available for all investors according  percentage share
-        uint256 nftId; //for use with futeres lock
+        bool isNFT; //for use with futeres lock
     }
 
     //Investor's share record
@@ -30,6 +30,5 @@ abstract contract LockerTypes {
         uint256 sharePercent;  //Investors share in this lock
         uint256 claimedAmount; //Already claimed amount
     }
-
 
 }

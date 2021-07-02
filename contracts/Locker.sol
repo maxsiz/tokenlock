@@ -222,7 +222,7 @@ contract Locker is LockerTypes {
         VestingRecord[] memory v = lockerStorage[_lockIndex].vestings;
         uint256 res = 0;
         for (uint256 i = 0; i < v.length; i ++ ) {
-            if  (v[i].unlockTime <= block.timestamp && v[i].nftId == 0) {
+            if  (v[i].unlockTime <= block.timestamp && !v[i].isNFT) {
                 res += v[i].amountUnlock;
             }
         }

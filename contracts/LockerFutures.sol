@@ -39,7 +39,7 @@ contract LockerFutures is Locker, Ownable {
         require(vr.unlockTime > block.timestamp + DELAY_FOR_FUTURES_ISSUANCE, 
              "To late for this vesting"
         );
-        require(vr.nftId == 0, "This futures already issued");
+        require(!vr.isNFT, "This futures already issued");
         
         //Check that tx.sender have none zero share in this lock
         //to be authorize for mint NFT 
@@ -68,7 +68,7 @@ contract LockerFutures is Locker, Ownable {
         //Save nftid in vesting record for exclude amount of this vesting
         //record from available for ordinar claim.
         //from this moment this amount can be claimed only for NFT owner
-        vr.nftId =  _getNFTtokenID(_lockIndex, _vestingIndex);
+        vr.isNFT = true;
     }
 
     function claimWithNFT(uint256 _tokenId) external {
@@ -97,6 +97,14 @@ contract LockerFutures is Locker, Ownable {
 
         IERC1155Mintable(futuresERC1155).burn(
                 msg.sender, _tokenId, IERC1155Mintable(futuresERC1155).balanceOf(msg.sender, _tokenId));
+    }
+
+
+    function getNFTIdByLockVestingIndexes(uint256 _lockIndex, uint256 _vestingIndex) external view returns (uint256) {
+
+        VestingRecord storage vr = lockerStorage[_lockIndex].vestings[_vestingIndex];
+        require(vr.isNFT, "NFT is not minted yet");
+        return _lockIndex * LOCK_ID_SCALE +_vestingIndex;
     }
 
     ///////////////////////////////////////////////////////////

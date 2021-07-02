@@ -36,10 +36,11 @@ def test_locker_claim_tokens_check(accounts, lockfutures, erc1155, projecttoken)
     chain.sleep(2000000)
 
     with reverts("Insufficient for now"):
-            lockfutures.claimTokens(0, 10e18*1500/10000 + 30e18*1500/10000, {'from': accounts[1]})
+        lockfutures.claimTokens(0, 10e18*1500/10000 + 30e18*1500/10000, {'from': accounts[1]})
 
-    # lets try  claim nft minted token. ==> here is bug. ideally it should fail because we minted 0 tokenID already.
-    lockfutures.claimTokens(0, 10e18 * 1500 / 10000, {'from': accounts[1]})
+    # lets try  claim nft minted token.
+    with reverts("Insufficient for now"):
+        lockfutures.claimTokens(0, 10e18 * 1500 / 10000, {'from': accounts[1]})
     balance = projecttoken.balanceOf(accounts[1])
 
     logging.info(erc1155.balanceOf(accounts[1],0))
@@ -51,15 +52,35 @@ def test_locker_claim_tokens_check(accounts, lockfutures, erc1155, projecttoken)
     logging.info(balance)
     logging.info(projecttoken.balanceOf(accounts[1]))
 
+
     lockfutures.claimTokens(0, lockfutures.getUserBalances(accounts[1], 0)[1], {'from': accounts[1]})
     lockfutures.claimTokens(0, lockfutures.getUserBalances(accounts[2], 0)[1], {'from': accounts[2]})
     lockfutures.claimTokens(0, lockfutures.getUserBalances(accounts[3], 0)[1], {'from': accounts[3]})
     lockfutures.claimTokens(0, lockfutures.getUserBalances(accounts[4], 0)[1], {'from': accounts[4]})
     lockfutures.claimTokens(0, lockfutures.getUserBalances(accounts[5], 0)[1], {'from': accounts[5]})
-    # lockfutures.claimTokens(0, lockfutures.getUserBalances(accounts[6], 0)[1], {'from': accounts[6]})
+    lockfutures.claimTokens(0, lockfutures.getUserBalances(accounts[6], 0)[1], {'from': accounts[6]})
 
     logging.info(projecttoken.balanceOf(lockfutures.address))
     logging.info(lockfutures.getUserBalances(accounts[6], 0))
+    logging.info(lockfutures.getUserBalances(accounts[5], 0))
+    logging.info(lockfutures.getUserBalances(accounts[4], 0))
+    logging.info(lockfutures.getUserBalances(accounts[3], 0))
+    logging.info(lockfutures.getUserBalances(accounts[2], 0))
+    logging.info(lockfutures.getUserBalances(accounts[1], 0))
+
+    lockfutures.claimWithNFT(0, {'from': accounts[2]})
+    lockfutures.claimWithNFT(0, {'from': accounts[3]})
+    lockfutures.claimWithNFT(0, {'from': accounts[4]})
+    lockfutures.claimWithNFT(0, {'from': accounts[5]})
+    lockfutures.claimWithNFT(0, {'from': accounts[6]})
+
+    assert projecttoken.balanceOf(lockfutures.address) == 0
 
 
-    assert projecttoken.balanceOf(lockfutures.address) == 40000000000000000000 - 1500000000000000000
+def test_futures_nftId(accounts, lockfutures, projecttoken, erc1155):
+
+    with reverts("NFT is not minted yet"):
+        lockfutures.getNFTIdByLockVestingIndexes(0,2)
+
+    logging.info(lockfutures.getNFTIdByLockVestingIndexes(0,0))
+
