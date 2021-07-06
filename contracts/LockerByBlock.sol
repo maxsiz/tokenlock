@@ -8,7 +8,7 @@ import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/IERC20.s
 import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./LockerTypes.sol";
 
-contract Locker is LockerTypes {
+contract LockerByBlock is LockerTypes {
     using SafeERC20 for IERC20;
 
     string  constant name = "Lock & Registry v0.0.2"; 
@@ -224,7 +224,7 @@ contract Locker is LockerTypes {
         VestingRecord[] memory v = lockerStorage[_lockIndex].vestings;
         uint256 res = 0;
         for (uint256 i = 0; i < v.length; i ++ ) {
-            if  (v[i].unlockTime <= block.timestamp && !v[i].isNFT) {
+            if  (v[i].unlockTime <= block.number && !v[i].isNFT) {
                 res += v[i].amountUnlock;
             }
         }
