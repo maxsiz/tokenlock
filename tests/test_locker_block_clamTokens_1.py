@@ -152,13 +152,9 @@ def test_claimToken_1(accounts, projecttoken, blocklocker):
     assert blocklocker.registry(accounts[7], lockIndex)[2] == claimedAmount + amount''' #check claimedAmount
     
     
-    # несколько раз один и тот же счет добавлен в блокировку - потом по нему изъятие
-    # счет участвует в нескольких блокировках, пытается получить свои токены
+    # несколько раз один и тот же счет добавлен в блокировку - потом по нему изъятие  - задача 1
     # попытка - добавить зеро адрес в бенефициары
     # попытка - добавить адрес контракта в бенефициары
-
-    #_getUserSharePercentAndClaimedAmount
-    # _getAvailableAmountByLockIndex
 
 
 
