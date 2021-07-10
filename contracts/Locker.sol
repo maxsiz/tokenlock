@@ -60,7 +60,8 @@ contract Locker is LockerTypes {
         require(_unlockedFrom.length == _unlockAmount.length, "Length of periods and amounts arrays must be equal");
         require(_beneficiaries.length == _beneficiariesShares.length, "Length of beneficiaries and shares arrays must be equal");
         require(_getArraySum(_beneficiariesShares) == TOTAL_IN_PERCENT, "Sum of shares array must be equal to 100%");
-        
+        require(_beneficiaries.length <= MAX_VESTING_RECORDS_PER_LOCK,"MAX_VESTING_RECORDS_PER_LOCK LIMIT");
+
         //Lets prepare vestings array
         VestingRecord[] memory v = new VestingRecord[](_unlockedFrom.length);
         for (uint256 i = 0; i < _unlockedFrom.length; i ++ ) {
