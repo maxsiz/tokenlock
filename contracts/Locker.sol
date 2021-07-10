@@ -219,6 +219,7 @@ contract Locker is LockerTypes {
     function _getAvailableAmountByLockIndex(uint256 _lockIndex) 
         internal 
         view 
+        virtual
         returns(uint256)
     {
         VestingRecord[] memory v = lockerStorage[_lockIndex].vestings;
