@@ -128,7 +128,7 @@ def test_claimToken_1(accounts, projecttoken, blocklocker):
         {'from': accounts[0]}
     )
     lockIndex = blocklocker.getLockCount() - 1
-    logging.info('blocklocker.getLockRecordByIndex(lockIndex) = {}'.format(blocklocker.getLockRecordByIndex(lockIndex)))
+    logging.info('blocklocker.getLockRecordByIndex({}) = {}'.format(lockIndex, blocklocker.getLockRecordByIndex(lockIndex)))
 
     #mine blocks
     chain.mine(105)
@@ -140,16 +140,22 @@ def test_claimToken_1(accounts, projecttoken, blocklocker):
     logging.info('amount = {}'.format(amount))
     balance_contract = projecttoken.balanceOf(blocklocker.address)
     balance_account = projecttoken.balanceOf(accounts[7].address)
-    claimedAmount = blocklocker.registry(accounts[7], lockIndex)[2]
+
+    #Lets calc user shares
+    claimedAmount = sum([x[2] for x in blocklocker.getUserShares(accounts[7])])
+    #claimedAmount = blocklocker.registry(accounts[7], lockIndex)[2]  - NOT WORK, NOT RETURN ARRAY BUT one element
 
     logging.info('blocklocker.registry(accounts[7], lockIndex) = {}'.format(blocklocker.registry(accounts[7], lockIndex)))
     logging.info('blocklocker.getUserBalances(accounts[7], lockIndex) = {}'.format(blocklocker.getUserBalances(accounts[7], lockIndex)))
 
-    blocklocker.claimTokens(lockIndex, amount, {"from": accounts[7]})
-    
+    tx = blocklocker.claimTokens(lockIndex, amount, {"from": accounts[7]})
+    logging.info(tx.events)
+    logging.info('After claim blocklocker.registry(accounts[7], lockIndex) = {}'.format(blocklocker.registry(accounts[7], lockIndex)))
+    logging.info('After blocklocker.getUserBalances(accounts[7], lockIndex) = {}'.format(blocklocker.getUserBalances(accounts[7], lockIndex)))
+    logging.info('After blocklocker.getUserShares(accounts[7], = {}'.format(blocklocker.getUserShares(accounts[7])))
     assert projecttoken.balanceOf(blocklocker.address) == balance_contract - amount
     assert projecttoken.balanceOf(accounts[7].address) == balance_account + amount
-    assert blocklocker.registry(accounts[7], lockIndex)[2] == claimedAmount + amount #check claimedAmount
+    assert sum([x[2] for x in blocklocker.getUserShares(accounts[7])]) == claimedAmount + amount #check claimedAmount
     
     
     # несколько раз один и тот же счет добавлен в блокировку - потом по нему изъятие  - задача 1
