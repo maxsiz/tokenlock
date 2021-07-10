@@ -11,9 +11,10 @@ import "./LockerTypes.sol";
 contract Locker is LockerTypes {
     using SafeERC20 for IERC20;
 
-    string  constant name = "Lock & Registry v0.0.2"; 
-    uint256 constant MAX_VESTING_RECORDS_PER_LOCK = 250;
-    uint256 constant TOTAL_IN_PERCENT = 10000;
+    string  constant public name = "Lock & Registry v0.0.2"; 
+    uint256 constant public MAX_VESTING_RECORDS_PER_LOCK = 250;
+    uint256 constant public MAX_LOCkS_PER_BENEFICIARY = 1000; 
+    uint256 constant public TOTAL_IN_PERCENT = 10000;
     LockStorageRecord[] lockerStorage;
 
     //map from users(investors)  to locked shares
@@ -83,13 +84,19 @@ contract Locker is LockerTypes {
 
         //Lets save _beneficiaries for this lock
         for (uint256 i = 0; i < _beneficiaries.length; i ++ ) {
+            require(_beneficiaries[i] != address(0), 'Cant add zero address');
+            require(_beneficiaries[i] != address(this), 'Bad idea');
             RegistryShare[] storage shares = registry[_beneficiaries[i]];
+            require(
+                shares.length <= MAX_LOCkS_PER_BENEFICIARY, 
+                'MAX_LOCkS_PER_BENEFICIARY LIMIT'
+            );
             shares.push(RegistryShare({
                 lockIndex: lockerStorage.length - 1,
                 sharePercent: _beneficiariesShares[i],
                 claimedAmount: 0
             }));
-            //Save beneficaries in one map
+            //Save beneficaries in one map for use in child conatrcts
             beneficiariesInLock[lockerStorage.length - 1].push(_beneficiaries[i]);
         }
 
