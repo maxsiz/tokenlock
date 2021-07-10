@@ -145,11 +145,11 @@ def test_claimToken_1(accounts, projecttoken, blocklocker):
     logging.info('blocklocker.registry(accounts[7], lockIndex) = {}'.format(blocklocker.registry(accounts[7], lockIndex)))
     logging.info('blocklocker.getUserBalances(accounts[7], lockIndex) = {}'.format(blocklocker.getUserBalances(accounts[7], lockIndex)))
 
-    blocklocker.claimTokens(0, amount, {"from": accounts[7]})
+    blocklocker.claimTokens(lockIndex, amount, {"from": accounts[7]})
     
-    '''assert projecttoken.balanceOf(blocklocker.address) == balance_contract - amount
+    assert projecttoken.balanceOf(blocklocker.address) == balance_contract - amount
     assert projecttoken.balanceOf(accounts[7].address) == balance_account + amount
-    assert blocklocker.registry(accounts[7], lockIndex)[2] == claimedAmount + amount''' #check claimedAmount
+    assert blocklocker.registry(accounts[7], lockIndex)[2] == claimedAmount + amount #check claimedAmount
     
     
     # несколько раз один и тот же счет добавлен в блокировку - потом по нему изъятие  - задача 1
