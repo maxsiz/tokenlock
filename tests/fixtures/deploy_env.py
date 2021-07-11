@@ -18,6 +18,10 @@ def locker(accounts, Locker):
     locker = accounts[0].deploy(Locker)
     yield locker
 
+@pytest.fixture(scope="module")
+def blocklocker(accounts, LockerByBlock):
+    locker = accounts[0].deploy(LockerByBlock)
+    yield locker
 
 @pytest.fixture(scope="module")
 def lockfutures(accounts, LockerFutures):

@@ -54,4 +54,3 @@ def test_lock_claim_by_little(accounts, projecttoken, locker):
 
     assert projecttoken.balanceOf(accounts[1]) == availableTo
 
-
