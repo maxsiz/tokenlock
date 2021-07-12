@@ -13,8 +13,14 @@ contract Locker is LockerTypes {
 
     string  constant public name = "Lock & Registry v0.0.2"; 
     uint256 constant public MAX_VESTING_RECORDS_PER_LOCK = 250;
-    uint256 constant public MAX_LOCkS_PER_BENEFICIARY = 1000; 
-    uint256 constant public TOTAL_IN_PERCENT = 10000;
+    uint256 constant public MAX_LOCkS_PER_BENEFICIARY = 1000;
+
+    /**
+     * @dev Then more TOTAL_IN_PERCENT then more precision.
+     * but be attention with _beneficiariesShares array
+     * accordingly this value
+     */
+    uint256 constant public TOTAL_IN_PERCENT = 1e13;
     LockStorageRecord[] lockerStorage;
 
     //map from users(investors)  to locked shares
@@ -38,8 +44,8 @@ contract Locker is LockerTypes {
      * - `_unlockedFrom` array of unlock dates in unixtime format.
      * - `_unlockAmount` array of unlock amounts.
      * - `_beneficiaries` array of address for beneficiaries.
-     * - `_beneficiariesShares` array of beneficiaries shares, % 
-     * - scaled on 100. so 20% = 2000, 0.1% = 10.
+     * - `_beneficiariesShares` array of beneficiaries shares, in % but 
+     * - scaled on TOTAL_IN_PERCENT/100. So 20% = 2000 if TOTAL_IN_PERCENT=10000, 0.1% = 10 and etc.
      * Caller must approve _ERC20 tokens to this contract address before lock
      */
     function lockTokens(
