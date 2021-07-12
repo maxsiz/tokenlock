@@ -94,6 +94,67 @@ def test_lock_token_fail(accounts, projecttoken, blocklocker):
             [1600, 1500, 700, 100, 2200, 4000],
             {'from': accounts[0]}
         )
+    # add zero address to beneficiary list
+    with reverts("Cant add zero address"):
+        blocklocker.lockTokens(
+            projecttoken.address,
+            LOCKED_AMOUNT,
+            [current_block + 100, current_block + 200, current_block + 300, current_block + 400, current_block + 500],
+            [10e18 ,30e18, 30e18, 15e18, 15e18],
+            [zero_address_ ,accounts[2], accounts[3], accounts[4], accounts[5], accounts[6]],
+            [1500, 1500, 700, 100, 2200, 4000],
+            {'from': accounts[0]}
+        )
+
+    # add contract address to beneficiary list
+    with reverts("Bad idea"):
+        blocklocker.lockTokens(
+            projecttoken.address,
+            LOCKED_AMOUNT,
+            [current_block + 100, current_block + 200, current_block + 300, current_block + 400, current_block + 500],
+            [10e18 ,30e18, 30e18, 15e18, 15e18],
+            [blocklocker.address ,accounts[2], accounts[3], accounts[4], accounts[5], accounts[6]],
+            [1500, 1500, 700, 100, 2200, 4000],
+            {'from': accounts[0]}
+        )
+
+    #a lot of accounts in _beneficiaries
+    beneficiaries = []
+    beneficiariesShares = []
+    x = blocklocker.MAX_VESTING_RECORDS_PER_LOCK() + 1
+    for i in range(x):
+        accounts.add()
+        beneficiaries.append(accounts[i+1])
+        if i != blocklocker.MAX_VESTING_RECORDS_PER_LOCK():
+            beneficiariesShares.append(blocklocker.TOTAL_IN_PERCENT()/blocklocker.MAX_VESTING_RECORDS_PER_LOCK())
+        else:
+            beneficiariesShares.append(0)
+        logging.info('i = {}'.format(i))
+    with reverts("MAX_VESTING_RECORDS_PER_LOCK LIMIT"):
+        blocklocker.lockTokens(
+            projecttoken.address,
+            LOCKED_AMOUNT,
+            [current_block + 100, current_block + 200, current_block + 300, current_block + 400, current_block + 500],
+            [10e18 ,30e18, 30e18, 15e18, 15e18],
+            beneficiaries,
+            beneficiariesShares,
+            {'from': accounts[0]}
+        )
+
+    #MAX_LOCkS_PER_BENEFICIARY LIMIT
+
+    '''with reverts("MAX_LOCkS_PER_BENEFICIARY LIMIT"):
+        blocklocker.lockTokens(
+            projecttoken.address,
+            LOCKED_AMOUNT,
+            [current_block + 100, current_block + 200, current_block + 300, current_block + 400, current_block + 500],
+            [10e18 ,30e18, 30e18, 15e18, 15e18],
+            [accounts[1] ,accounts[2], accounts[3], accounts[4], accounts[5], accounts[6]],
+            [1500, 1500, 700, 100, 2200, 4000],
+            {'from': accounts[0]}
+        )'''
+
+
 #simple blocking   
 def test_lock_token(accounts, projecttoken, blocklocker):
     #prepare data
@@ -204,11 +265,10 @@ def test_lock_token(accounts, projecttoken, blocklocker):
     )'''
 
 
-    # очень много счетов бенефициаров
     # несколько раз сделать изъятие токенов по одному счету за раунд
     # по нескольким счетам сделать изъятие за раунд
     # попытка изъять, когда все уже выбрано счетом за раунд
-    # несколько раз один и тот же счет добавлен в блокировку
+    # несколько раз один и тот же счет добавлен в блокировку - потом по нему изъятие
     # пропустил раунд и не забирал монеты, потом во втором раунде за один раз за два раунда пытается забрать
     # попытка - добавить зеро адрес в бенефициары
     # попытка - добавить адрес контракта в бенефициары
