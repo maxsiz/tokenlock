@@ -20,7 +20,7 @@ contract Locker is LockerTypes {
      * but be attention with _beneficiariesShares array
      * accordingly this value
      */
-    uint256 constant public TOTAL_IN_PERCENT = 1e13;
+    uint256 constant public TOTAL_IN_PERCENT = 1e4;
     LockStorageRecord[] lockerStorage;
 
     //map from users(investors)  to locked shares
