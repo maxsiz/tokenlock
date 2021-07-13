@@ -4,7 +4,7 @@ import web3
 
 LOGGER = logging.getLogger(__name__)
 
-LOCKED_AMOUNT = 100e18
+LOCKED_AMOUNT = 100
 zero_address_ = '0x0000000000000000000000000000000000000000'
 
 def test_lock_token_fail(accounts, projecttoken, blocklocker):
@@ -16,7 +16,7 @@ def test_lock_token_fail(accounts, projecttoken, blocklocker):
             zero_address_,
             LOCKED_AMOUNT,
             [current_block + 100, current_block + 200, current_block + 300, current_block + 400, current_block + 500],
-            [10e18, 30e18, 30e18, 15e18, 15e18],
+            [10, 30, 30, 15, 15],
             [accounts[1], accounts[2], accounts[3], accounts[4], accounts[5], accounts[6]],
             [1500, 1500, 700, 100, 2200, 4000],
             {'from': accounts[0]}
@@ -28,7 +28,7 @@ def test_lock_token_fail(accounts, projecttoken, blocklocker):
             projecttoken.address,
             0,
             [current_block + 100, current_block + 200, current_block + 300, current_block + 400, current_block + 500],
-            [10e18, 30e18, 30e18, 15e18, 15e18],
+            [10, 30, 30, 15, 15],
             [accounts[1], accounts[2], accounts[3], accounts[4], accounts[5], accounts[6]],
             [1500, 1500, 700, 100, 2200, 4000],
             {'from': accounts[0]}
@@ -40,7 +40,7 @@ def test_lock_token_fail(accounts, projecttoken, blocklocker):
             projecttoken.address,
             LOCKED_AMOUNT,
             [current_block + 100, current_block + 200, current_block + 300, current_block + 400, current_block + 500],
-            [10e18, 30e18, 30e18, 15e18, 15e18],
+            [10, 30, 30, 15, 15],
             [accounts[1], accounts[2], accounts[3], accounts[4], accounts[5], accounts[6]],
             [1500, 1500, 700, 100, 2200, 4000],
             {'from': accounts[0]}
@@ -53,7 +53,7 @@ def test_lock_token_fail(accounts, projecttoken, blocklocker):
             projecttoken.address,
             LOCKED_AMOUNT,
             [current_block + 100, current_block + 200, current_block + 300, current_block + 400, current_block + 500],
-            [11e18, 30e18, 30e18, 15e18, 15e18],
+            [11, 30, 30, 15, 15],
             [accounts[1], accounts[2], accounts[3], accounts[4], accounts[5], accounts[6]],
             [1500, 1500, 700, 100, 2200, 4000],
             {'from': accounts[0]}
@@ -65,7 +65,7 @@ def test_lock_token_fail(accounts, projecttoken, blocklocker):
             projecttoken.address,
             LOCKED_AMOUNT,
             [current_block + 100, current_block + 200, current_block + 300, current_block + 400, current_block + 500],
-            [40e18, 30e18, 15e18, 15e18],
+            [40, 30, 15, 15],
             [accounts[1], accounts[2], accounts[3], accounts[4], accounts[5], accounts[6]],
             [1500, 1500, 700, 100, 2200, 4000],
             {'from': accounts[0]}
@@ -77,7 +77,7 @@ def test_lock_token_fail(accounts, projecttoken, blocklocker):
             projecttoken.address,
             LOCKED_AMOUNT,
             [current_block + 100, current_block + 200, current_block + 300, current_block + 400, current_block + 500],
-            [10e18 ,30e18, 30e18, 15e18, 15e18],
+            [10 ,30, 30, 15, 15],
             [accounts[2], accounts[3], accounts[4], accounts[5], accounts[6]],
             [1500, 1500, 700, 100, 2200, 4000],
             {'from': accounts[0]}
@@ -89,7 +89,7 @@ def test_lock_token_fail(accounts, projecttoken, blocklocker):
             projecttoken.address,
             LOCKED_AMOUNT,
             [current_block + 100, current_block + 200, current_block + 300, current_block + 400, current_block + 500],
-            [10e18 ,30e18, 30e18, 15e18, 15e18],
+            [10 ,30, 30, 15, 15],
             [accounts[1] ,accounts[2], accounts[3], accounts[4], accounts[5], accounts[6]],
             [1600, 1500, 700, 100, 2200, 4000],
             {'from': accounts[0]}
@@ -100,7 +100,7 @@ def test_lock_token_fail(accounts, projecttoken, blocklocker):
             projecttoken.address,
             LOCKED_AMOUNT,
             [current_block + 100, current_block + 200, current_block + 300, current_block + 400, current_block + 500],
-            [10e18 ,30e18, 30e18, 15e18, 15e18],
+            [10 ,30, 30, 15, 15],
             [zero_address_ ,accounts[2], accounts[3], accounts[4], accounts[5], accounts[6]],
             [1500, 1500, 700, 100, 2200, 4000],
             {'from': accounts[0]}
@@ -112,47 +112,36 @@ def test_lock_token_fail(accounts, projecttoken, blocklocker):
             projecttoken.address,
             LOCKED_AMOUNT,
             [current_block + 100, current_block + 200, current_block + 300, current_block + 400, current_block + 500],
-            [10e18 ,30e18, 30e18, 15e18, 15e18],
+            [10 ,30, 30, 15, 15],
             [blocklocker.address ,accounts[2], accounts[3], accounts[4], accounts[5], accounts[6]],
             [1500, 1500, 700, 100, 2200, 4000],
             {'from': accounts[0]}
         )
 
-    #a lot of accounts in _beneficiaries
-    beneficiaries = []
-    beneficiariesShares = []
-    x = blocklocker.MAX_VESTING_RECORDS_PER_LOCK() + 1
-    for i in range(x):
-        accounts.add()
-        beneficiaries.append(accounts[i+1])
-        if i != blocklocker.MAX_VESTING_RECORDS_PER_LOCK():
-            beneficiariesShares.append(blocklocker.TOTAL_IN_PERCENT()/blocklocker.MAX_VESTING_RECORDS_PER_LOCK())
-        else:
-            beneficiariesShares.append(0)
-        logging.info('i = {}'.format(i))
-    with reverts("MAX_VESTING_RECORDS_PER_LOCK LIMIT"):
-        blocklocker.lockTokens(
-            projecttoken.address,
-            LOCKED_AMOUNT,
-            [current_block + 100, current_block + 200, current_block + 300, current_block + 400, current_block + 500],
-            [10e18 ,30e18, 30e18, 15e18, 15e18],
-            beneficiaries,
-            beneficiariesShares,
-            {'from': accounts[0]}
-        )
-
     #MAX_LOCkS_PER_BENEFICIARY LIMIT
+    with reverts("MAX_LOCkS_PER_BENEFICIARY LIMIT"):
+        for i in range(blocklocker.MAX_LOCkS_PER_BENEFICIARY()+2):
+            logging.info('i = {}'.format(i))
+            blocklocker.lockTokens(
+                projecttoken.address,
+                LOCKED_AMOUNT,
+                [current_block + 100],
+                [LOCKED_AMOUNT],
+                [accounts[1]],
+                [blocklocker.TOTAL_IN_PERCENT()],
+                {'from': accounts[0]}
+            )
+    #try to claim after 1000 blocking
+    assert projecttoken.balanceOf(accounts[1]) == 0
+    blocklocker.claimTokens(0, 1, {"from": accounts[1]})
+    assert projecttoken.balanceOf(accounts[1]) == 1
+    lockIndex = blocklocker.getLockCount() - 1
+    logging.info('blocklocker.getUserShares(accounts[1]) = {}'.format(blocklocker.getUserShares(accounts[1])))
+    logging.info('blocklocker.getUserBalances(accounts[1], 0) = {}'.format(blocklocker.getUserBalances(accounts[1], lockIndex)))
+    logging.info('blocklocker.getLockRecordByIndex(0) = {}'.format(blocklocker.getLockRecordByIndex(0)))
+    logging.info('blocklocker.registry(accounts[1], lockIndex) = {}'.format(blocklocker.registry(accounts[1], lockIndex)))
 
-    '''with reverts("MAX_LOCkS_PER_BENEFICIARY LIMIT"):
-        blocklocker.lockTokens(
-            projecttoken.address,
-            LOCKED_AMOUNT,
-            [current_block + 100, current_block + 200, current_block + 300, current_block + 400, current_block + 500],
-            [10e18 ,30e18, 30e18, 15e18, 15e18],
-            [accounts[1] ,accounts[2], accounts[3], accounts[4], accounts[5], accounts[6]],
-            [1500, 1500, 700, 100, 2200, 4000],
-            {'from': accounts[0]}
-        )'''
+
 
 
 #simple blocking   
@@ -165,22 +154,23 @@ def test_lock_token(accounts, projecttoken, blocklocker):
     beneficiariesShares = []
     amount = 0
     amount1 = 0
-    for i in range(6):
-        unlockedFrom.append(current_block + (i+1)*100)
-        if i != 5:
-            unlockAmount.append(10e18)
+    for i in [2, 3, 4, 5, 6]:
+        unlockedFrom.append(current_block + i*100)
+        if i != 6:
+            unlockAmount.append(10)
             beneficiariesShares.append(1000)
-            amount += 10e18
+            amount += 10
             amount1 += 1000
         else:
             unlockAmount.append(LOCKED_AMOUNT - amount)
             beneficiariesShares.append(10000 - amount1)
-        beneficiaries.append(accounts[i+1])
+        beneficiaries.append(accounts[i])
     '''logging.info('unlockedFrom = {}'.format(unlockedFrom))
     logging.info('unlockAmount = {}'.format(unlockAmount))
     logging.info('beneficiaries = {}'.format(beneficiaries))
     logging.info('beneficiariesShares = {}'.format(beneficiariesShares))'''
 
+    balance_before = projecttoken.balanceOf(blocklocker.address)
     #blocking
     projecttoken.approve(blocklocker.address, projecttoken.balanceOf(accounts[0]), {'from':accounts[0]})
     blocklocker.lockTokens(
@@ -197,12 +187,14 @@ def test_lock_token(accounts, projecttoken, blocklocker):
     logging.info('blocklocker.registry(accounts[1], lockIndex) = {}'.format(blocklocker.registry(accounts[1], lockIndex)))
     logging.info('blocklocker.registry(accounts[3], lockIndex) = {}'.format(blocklocker.registry(accounts[3], lockIndex)))'''
 
-    assert projecttoken.balanceOf(blocklocker.address) == LOCKED_AMOUNT
-    for i in range(6):
-        assert blocklocker.registry(accounts[i + 1], lockIndex)[1] == beneficiariesShares[i]
-        assert blocklocker.registry(accounts[i + 1], lockIndex)[2] == 0
-        assert blocklocker.getLockRecordByIndex(lockIndex)[3][i][0] == unlockedFrom[i]
-        assert blocklocker.getLockRecordByIndex(lockIndex)[3][i][1] == unlockAmount[i]
+    assert projecttoken.balanceOf(blocklocker.address) == balance_before + LOCKED_AMOUNT
+    for i in [2, 3, 4, 5, 6]:
+        logging.info('i check= {}'.format(i))
+
+        assert blocklocker.registry(accounts[i], lockIndex)[1] == beneficiariesShares[i-2]
+        assert blocklocker.registry(accounts[i], lockIndex)[2] == 0
+        assert blocklocker.getLockRecordByIndex(lockIndex)[3][i-2][0] == unlockedFrom[i-2]
+        assert blocklocker.getLockRecordByIndex(lockIndex)[3][i-2][1] == unlockAmount[i-2]
 
 
 #a lot of rounds
