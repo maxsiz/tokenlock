@@ -190,6 +190,7 @@ def test_lock_token(accounts, projecttoken, blocklocker):
     assert projecttoken.balanceOf(blocklocker.address) == balance_before + LOCKED_AMOUNT
     for i in [2, 3, 4, 5, 6]:
         logging.info('i check= {}'.format(i))
+        logging.info('blocklocker.registry(accounts[i], lockIndex) fail = {}'.format(blocklocker.registry(accounts[i], lockIndex)))
 
         assert blocklocker.registry(accounts[i], lockIndex)[1] == beneficiariesShares[i-2]
         assert blocklocker.registry(accounts[i], lockIndex)[2] == 0

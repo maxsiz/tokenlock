@@ -12,7 +12,7 @@ contract Locker is LockerTypes {
     using SafeERC20 for IERC20;
 
     string  constant public name = "Lock & Registry v0.0.2"; 
-    uint256 constant public MAX_VESTING_RECORDS_PER_LOCK = 250;
+    uint256 constant public MAX_VESTING_RECORDS_PER_LOCK = 160;
     uint256 constant public MAX_LOCkS_PER_BENEFICIARY = 1000;
 
     /**
