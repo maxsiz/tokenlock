@@ -22,7 +22,6 @@ def test_lock_token_fail(accounts, projecttoken, blocklocker):
 			percents += math.floor(blocklocker.TOTAL_IN_PERCENT() / x)
 		else:
 			beneficiariesShares.append(blocklocker.TOTAL_IN_PERCENT() - percents)
-		#logging.info('i = {}'.format(i))
 	logging.info('beneficiaries = {}'.format(beneficiaries))
 	projecttoken.approve(blocklocker.address, projecttoken.balanceOf(accounts[0]), {'from':accounts[0]})
 

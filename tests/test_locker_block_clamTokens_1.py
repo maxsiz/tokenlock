@@ -12,10 +12,6 @@ def test_claimToken(accounts, projecttoken, blocklocker):
     #prepare data
     current_block = chain.height
     projecttoken.approve(blocklocker.address, projecttoken.balanceOf(accounts[0]), {'from':accounts[0]})
-    '''logging.info('unlockedFrom = {}'.format(unlockedFrom))
-    logging.info('unlockAmount = {}'.format(unlockAmount))
-    logging.info('beneficiaries = {}'.format(beneficiaries))
-    logging.info('beneficiariesShares = {}'.format(beneficiariesShares))'''
 
     #blocking
     blocklocker.lockTokens(
@@ -29,8 +25,6 @@ def test_claimToken(accounts, projecttoken, blocklocker):
     )
     lockIndex = blocklocker.getLockCount() - 1
     logging.info('blocklocker.getLockRecordByIndex(lockIndex) = {}'.format(blocklocker.getLockRecordByIndex(lockIndex)))
-    
-    '''logging.info('blocklocker.registry(accounts[3], lockIndex) = {}'.format(blocklocker.registry(accounts[3], lockIndex)))'''
 
     assert projecttoken.balanceOf(blocklocker.address) == LOCKED_AMOUNT
 
@@ -80,7 +74,6 @@ def test_claimToken(accounts, projecttoken, blocklocker):
     with reverts("Insufficient for now"):
         blocklocker.claimTokens(0, amount, {"from": accounts[1]})
 
-    # logging.info('chain.height = {}'.format(chain.height))
     # account2 claims tokens in current round
     balance_contract = projecttoken.balanceOf(blocklocker.address)
     balance_account = projecttoken.balanceOf(accounts[2].address)
@@ -134,8 +127,6 @@ def test_claimToken_1(accounts, projecttoken, blocklocker):
     chain.mine(105)
     logging.info('blocklocker.getLockRecordByIndex(lockIndex)[3][0][1] = {}'.format(blocklocker.getLockRecordByIndex(lockIndex)[3][0][1]))
 
-    #amount = blocklocker.getLockRecordByIndex(lockIndex)[3][0][1] #there are two beneficiaries. Both equals account7
-    #amount = blocklocker.getLockRecordByIndex(lockIndex)[3][0][1] # * blocklocker.registry(accounts[3], lockIndex)[1]/10000
     amount =  1
     logging.info('amount = {}'.format(amount))
     balance_contract = projecttoken.balanceOf(blocklocker.address)
@@ -156,11 +147,6 @@ def test_claimToken_1(accounts, projecttoken, blocklocker):
     assert projecttoken.balanceOf(blocklocker.address) == balance_contract - amount
     assert projecttoken.balanceOf(accounts[7].address) == balance_account + amount
     assert sum([x[2] for x in blocklocker.getUserShares(accounts[7])]) == claimedAmount + amount #check claimedAmount
-    
-    
-    # несколько раз один и тот же счет добавлен в блокировку - потом по нему изъятие  - задача 1
-    # попытка - добавить зеро адрес в бенефициары
-    # попытка - добавить адрес контракта в бенефициары
 
 
 

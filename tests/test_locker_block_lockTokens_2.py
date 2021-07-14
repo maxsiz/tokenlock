@@ -29,10 +29,6 @@ def test_lock_token(accounts, projecttoken, blocklocker):
             unlockAmount.append(LOCKED_AMOUNT - amount)
             beneficiariesShares.append(10000 - amount1)
         beneficiaries.append(accounts[i])
-    '''logging.info('unlockedFrom = {}'.format(unlockedFrom))
-    logging.info('unlockAmount = {}'.format(unlockAmount))
-    logging.info('beneficiaries = {}'.format(beneficiaries))
-    logging.info('beneficiariesShares = {}'.format(beneficiariesShares))'''
 
     balance_before = projecttoken.balanceOf(blocklocker.address)
     #blocking
@@ -47,9 +43,6 @@ def test_lock_token(accounts, projecttoken, blocklocker):
         {'from': accounts[0]}
     )
     lockIndex = blocklocker.getLockCount() - 1
-    '''logging.info('blocklocker.getLockRecordByIndex(lockIndex) = {}'.format(blocklocker.getLockRecordByIndex(lockIndex)))
-    logging.info('blocklocker.registry(accounts[1], lockIndex) = {}'.format(blocklocker.registry(accounts[1], lockIndex)))
-    logging.info('blocklocker.registry(accounts[3], lockIndex) = {}'.format(blocklocker.registry(accounts[3], lockIndex)))'''
 
     assert projecttoken.balanceOf(blocklocker.address) == balance_before + LOCKED_AMOUNT
 
