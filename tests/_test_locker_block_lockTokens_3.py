@@ -13,7 +13,7 @@ def test_lock_token_fail(accounts, projecttoken, blocklocker):
 	beneficiaries = []
 	beneficiariesShares = []
 	percents = 0
-	x = blocklocker.MAX_VESTING_RECORDS_PER_LOCK() + 1
+	x = blocklocker.MAX_BENEFICIARIES_PER_LOCK() + 1
 	for i in range(x):
 		accounts.add()
 		beneficiaries.append(accounts[i+1].address)
@@ -22,16 +22,23 @@ def test_lock_token_fail(accounts, projecttoken, blocklocker):
 			percents += math.floor(blocklocker.TOTAL_IN_PERCENT() / x)
 		else:
 			beneficiariesShares.append(blocklocker.TOTAL_IN_PERCENT() - percents)
-	logging.info('beneficiaries = {}'.format(beneficiaries))
+	
+	y = blocklocker.MAX_VESTING_RECORDS_PER_LOCK() + 1
+
+	_unlockedFrom =  [range(y).index(j) + current_block for j in range(y)]
+	_unlockAmount = _unlockedFrom
+	_lockingAmount = sum(_unlockedFrom)
+	logging.info('beneficiaries len= {}'.format(len(beneficiaries) - 1))
+	logging.info('VestingRecord len= {}'.format(len(_unlockAmount) - 1))
 	projecttoken.approve(blocklocker.address, projecttoken.balanceOf(accounts[0]), {'from':accounts[0]})
 
-	#with reverts("MAX_VESTING_RECORDS_PER_LOCK LIMIT"):
-	with reverts("MAX_VESTING_RECORDS_PER_LOCK LIMIT"):
+	#with reverts("MAX_BENEFICIARIES_PER_LOCK LIMIT"):
+	with reverts("MAX_BENEFICIARIES_PER_LOCK LIMIT"):
 		blocklocker.lockTokens(
 			projecttoken.address,
-			LOCKED_AMOUNT,
-			[current_block + 100, current_block + 200, current_block + 300, current_block + 400, current_block + 500],
-			[36e18 ,36e18, 36e18, 36e18, 36e18],
+			_lockingAmount,
+			_unlockedFrom,
+			_unlockAmount,
 			beneficiaries,
 			beneficiariesShares,
 			{'from': accounts[0]}

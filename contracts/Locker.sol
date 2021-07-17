@@ -11,9 +11,23 @@ import "./LockerTypes.sol";
 contract Locker is LockerTypes {
     using SafeERC20 for IERC20;
 
-    string  constant public name = "Lock & Registry v0.0.2"; 
-    uint256 constant public MAX_VESTING_RECORDS_PER_LOCK = 160;
-    uint256 constant public MAX_LOCkS_PER_BENEFICIARY = 1000;
+    string  constant public name = "Lock & Registry v0.0.3";
+
+
+    /**
+     * @dev Then more records in VestingRecord array then more gas will spend
+     * in  `lockTokens` method  and in every getter call_getAvailableAmountByLockIndex.
+     * So in some case it can revert After test we decide use yhis value. But it
+     * is not up limit and you can try more
+     */
+    uint256 constant public MAX_VESTING_RECORDS_PER_LOCK  = 21;
+    /**
+     * @dev Then more records in _beneficiaries then more gas will spend
+     * in  `lockTokens` method. After test we decide use yhis value. But it
+     * is not up limit and you can try more
+     */    
+    uint256 constant public MAX_BENEFICIARIES_PER_LOCK    = 160;
+    uint256 constant public MAX_LOCkS_PER_BENEFICIARY    = 1000;
 
     /**
      * @dev Then more TOTAL_IN_PERCENT then more precision.
@@ -66,7 +80,8 @@ contract Locker is LockerTypes {
         require(_unlockedFrom.length == _unlockAmount.length, "Length of periods and amounts arrays must be equal");
         require(_beneficiaries.length == _beneficiariesShares.length, "Length of beneficiaries and shares arrays must be equal");
         require(_getArraySum(_beneficiariesShares) == TOTAL_IN_PERCENT, "Sum of shares array must be equal to 100%");
-        require(_beneficiaries.length <= MAX_VESTING_RECORDS_PER_LOCK,"MAX_VESTING_RECORDS_PER_LOCK LIMIT");
+        require(_beneficiaries.length < MAX_BENEFICIARIES_PER_LOCK,   "MAX_BENEFICIARIES_PER_LOCK LIMIT");
+        require(_unlockedFrom.length  < MAX_VESTING_RECORDS_PER_LOCK, "MAX_VESTING_RECORDS_PER_LOCK LIMIT");
 
         //Lets prepare vestings array
         VestingRecord[] memory v = new VestingRecord[](_unlockedFrom.length);
