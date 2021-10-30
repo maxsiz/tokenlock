@@ -74,14 +74,14 @@ contract LockerFutures is Locker, Ownable {
     function claimWithNFT(uint256 _tokenId) external {
         require(
             IERC1155Mintable(futuresERC1155).balanceOf(msg.sender, _tokenId) > 0,
-            "Your futures balance is zero"
+            'Your futures balance is zero'
         );
 
         uint256 _lockIndex = _tokenId / LOCK_ID_SCALE;
         uint256 _vestingIndex = _tokenId -  (_lockIndex * LOCK_ID_SCALE);
         VestingRecord storage vr = lockerStorage[_lockIndex].vestings[_vestingIndex];
 
-        require(vr.unlockTime <= block.timestamp, 'Claiming NFT insufficient for now');
+        require(vr.unlockTime <= block.timestamp, "Claiming NFT insufficient for now");
 
 
         //Lets get ERC20 address of lock of this futures
