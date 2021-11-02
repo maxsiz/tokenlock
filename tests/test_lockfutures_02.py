@@ -72,8 +72,8 @@ def test_lockfutures_emit(accounts, projecttoken, nulltoken, lockfutures,erc1155
         logging.info(lockfutures.getLockRecordByIndex(0))
         for i in range(0, 4):
             for j in range(0, 5):
-                lockfutures.emitFutures(i, j, {'from': accounts[3]})
-                logging.info(lockfutures.getNFTIdByLockVestingIndexes(i,j))
+                lockfutures.emitFutures(i, j, False, {'from': accounts[3]})
+                logging.info('NFT id= {}'.format(lockfutures.getNFTIdByLockVestingIndexes(i,j)))
 
 
         ## claim
@@ -85,7 +85,7 @@ def test_lockfutures_emit(accounts, projecttoken, nulltoken, lockfutures,erc1155
         chain.sleep(90000)
 
         chain.mine(200)
-        for k in range(1,6):
+        for k in range(1,3):
             nft_before_amount = erc1155.balanceOf(accounts[k], 0)
             lockfutures.claimWithNFT(0, {'from': accounts[k]})
             assert erc1155.balanceOf(accounts[k], 0) == 0
@@ -109,4 +109,24 @@ def test_lockfutures_emit(accounts, projecttoken, nulltoken, lockfutures,erc1155
                 logging.info(lockfutures.getNFTIdByLockVestingIndexes(x,y))
                 with reverts("Claiming NFT insufficient for now"):
                     lockfutures.claimWithNFT(lockfutures.getNFTIdByLockVestingIndexes(x,y), {'from': accounts[3]})
+
+
+
+
+
+
+def test_check_transferrable_futures(accounts, lockfutures, erc1155):
+    ids = []
+    amounts = []
+    for i in range(0, 5):
+        ids.append(i)
+        amounts.append(erc1155.balanceOf(accounts[3], i))
+        logging.info('account[3] NFT balance len= {}'.format(erc1155.balanceOf(accounts[3], i)))
+
+    with reverts("token is not tansferrable"):
+        erc1155.safeTransferFrom(accounts[3], accounts[1], 0, erc1155.balanceOf(accounts[3], 0), '', {'from': accounts[3]})
+
+
+    with reverts("token is not tansferrable"):
+        erc1155.safeBatchTransferFrom(accounts[3], accounts[1], ids, amounts, '',{'from': accounts[3]})
 

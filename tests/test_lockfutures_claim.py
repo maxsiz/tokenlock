@@ -20,7 +20,7 @@ def test_mint_futures(accounts, lockfutures, projecttoken, erc1155):
         )
         logging.info(lockfutures.getLockRecordByIndex(0))
 
-        lockfutures.emitFutures(0, 2, {'from': accounts[3]})
+        lockfutures.emitFutures(0, 2, True, {'from': accounts[3]})
         logging.info(erc1155.balanceOf(accounts[1],2))
 
 

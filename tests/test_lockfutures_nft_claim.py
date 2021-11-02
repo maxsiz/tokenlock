@@ -62,7 +62,7 @@ def test_lock_tokens(accounts, projecttoken, nulltoken, lockfutures):
 def test_emitfutures(accounts, lockfutures, erc1155):
     for j in range(4):
         for i in range(5):
-            lockfutures.emitFutures(j, i, {'from': accounts[i + 1]})
+            lockfutures.emitFutures(j, i, True, {'from': accounts[i + 1]})
 
     for j in range(4):
         for i in range(5):
