@@ -25,7 +25,7 @@ def test_lock_token_to_locker(accounts, lockfutures, projecttoken, erc1155):
 
 def test_mint_futures_from_futures(accounts, lockfutures, erc1155):
 
-    lockfutures.emitFutures(0, 0, {'from' : accounts[2]})
+    lockfutures.emitFutures(0, 0, True, {'from' : accounts[2]})
 
     logging.info(erc1155.balanceOf(accounts[1],1))
     logging.info(erc1155.balanceOf(accounts[2],1))

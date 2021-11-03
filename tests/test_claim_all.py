@@ -33,14 +33,14 @@ def test_claim_tokens(accounts, lockfutures, projecttoken):
 
 def test_mint_tokens(accounts, lockfutures, erc1155):
     with reverts('To late for this vesting'):
-        lockfutures.emitFutures(0,0 ,{'from': accounts[4]})
+        lockfutures.emitFutures(0,0 , True,{'from': accounts[4]})
 
-    lockfutures.emitFutures(0,1, {'from':accounts[5]})
+    lockfutures.emitFutures(0,1,True, {'from':accounts[5]})
 
     chain.sleep(10000)
     chain.mine(6)
 
-    lockfutures.emitFutures(0,2, {'from':accounts[6]})
+    lockfutures.emitFutures(0,2, True, {'from':accounts[6]})
 
     assert erc1155.balanceOf(accounts[4],1) == (20e18 * 1250) / 10000
     assert erc1155.balanceOf(accounts[4],2) == 8.75e18

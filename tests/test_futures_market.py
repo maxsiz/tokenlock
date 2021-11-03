@@ -22,10 +22,10 @@ def test_futures_add(accounts, futuresmarket, projecttoken, lockfutures, erc1155
     lockfutures.setFuturesERC1155(erc1155.address, {'from': accounts[0]})
     logging.info(lockfutures.getLockRecordByIndex(0))
 
-    lockfutures.emitFutures(0, 2, {'from': accounts[3]})
+    lockfutures.emitFutures(0, 2, True, {'from': accounts[3]})
     logging.info(erc1155.balanceOf(accounts[1], 2))
 
-    lockfutures.emitFutures(0, 1, {'from': accounts[3]})
+    lockfutures.emitFutures(0, 1,True, {'from': accounts[3]})
 
 
     asset = (erc1155.address, 2, 2)

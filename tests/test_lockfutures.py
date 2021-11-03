@@ -21,22 +21,22 @@ def test_mint_futures_nft(accounts, lockfutures, projecttoken, erc1155):
         # lockfutures.setFuturesERC1155(erc1155.address, {'from': accounts[0]})
         logging.info(lockfutures.getLockRecordByIndex(0))
         with reverts("To late for this vesting"):
-            lockfutures.emitFutures(0, 1, {'from': accounts[2]})
+            lockfutures.emitFutures(0, 1, True, {'from': accounts[2]})
 
-        lockfutures.emitFutures(0, 2, {'from': accounts[3]})
+        lockfutures.emitFutures(0, 2, True, {'from': accounts[3]})
         logging.info(erc1155.balanceOf(accounts[1],2))
 
         with reverts("This futures already issued"):
-            lockfutures.emitFutures(0, 2, {'from': accounts[3]})
+            lockfutures.emitFutures(0, 2, True, {'from': accounts[3]})
 
         with reverts("Sender has no balance in this lock"):
-            lockfutures.emitFutures(0, 0, {'from': accounts[0]})
+            lockfutures.emitFutures(0, 0, True, {'from': accounts[0]})
 
-        lockfutures.emitFutures(0, 0, {'from': accounts[1]})
+        lockfutures.emitFutures(0, 0, True, {'from': accounts[1]})
 
         # it should fail
         with reverts("This futures already issued"):
-            lockfutures.emitFutures(0, 0, {'from': accounts[1]})
+            lockfutures.emitFutures(0, 0, True, {'from': accounts[1]})
 
         logging.info(lockfutures.getLockRecordByIndex(0))
 

@@ -7,13 +7,11 @@ logdo.md
 virutalenv
 .idea
 .vscode
+.DS_Store
 .virutalenv
-<<<<<<< HEAD
 venv
 .pytest_cache
 .env
-=======
 .env
 venv/
 .pytest_cache
->>>>>>> futures_market

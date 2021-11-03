@@ -13,6 +13,7 @@ import "./Locker.sol";
 interface  IERC1155Mintable is IERC1155 {
     function mint(address account, uint256 id, uint256 amount, bytes memory data) external;
     function burn(address account, uint256 id, uint256 amount) external;
+    function setTansferrableCondition(uint256 id, bool condition) external;
 }
 
 
@@ -31,7 +32,7 @@ contract LockerFutures is Locker, Ownable {
         uint256 claimDate
     );
     
-    function emitFutures(uint256 _lockIndex, uint256 _vestingIndex) 
+    function emitFutures(uint256 _lockIndex, uint256 _vestingIndex, bool _isTansferrable)
         external 
         returns (uint256)
     {
@@ -65,6 +66,10 @@ contract LockerFutures is Locker, Ownable {
                 bytes('0')
             );
         }
+        // set Transfer condition
+        // if it is 'False' then tokens never cant be transferred
+        IERC1155Mintable(futuresERC1155).setTansferrableCondition( _getNFTtokenID(_lockIndex, _vestingIndex), _isTansferrable);
+
         //Save nftid in vesting record for exclude amount of this vesting
         //record from available for ordinar claim.
         //from this moment this amount can be claimed only for NFT owner
@@ -74,14 +79,14 @@ contract LockerFutures is Locker, Ownable {
     function claimWithNFT(uint256 _tokenId) external {
         require(
             IERC1155Mintable(futuresERC1155).balanceOf(msg.sender, _tokenId) > 0,
-            "Your futures balance is zero"
+            'Your futures balance is zero'
         );
 
         uint256 _lockIndex = _tokenId / LOCK_ID_SCALE;
         uint256 _vestingIndex = _tokenId -  (_lockIndex * LOCK_ID_SCALE);
         VestingRecord storage vr = lockerStorage[_lockIndex].vestings[_vestingIndex];
 
-        require(vr.unlockTime <= block.timestamp, 'Claiming NFT insufficient for now');
+        require(vr.unlockTime <= block.timestamp, "Claiming NFT insufficient for now");
 
 
         //Lets get ERC20 address of lock of this futures
