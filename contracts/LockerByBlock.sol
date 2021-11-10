@@ -2,7 +2,7 @@
 // Platinum Software Dev Team
 // Locker  Beta  version.
 
-pragma solidity ^0.8.4;
+pragma solidity 0.8.9;
 
 import "./Locker.sol";
 

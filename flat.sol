@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.9;
 
-import "OpenZeppelin/openzeppelin-contracts@4.3.2/contracts/token/ERC1155/ERC1155.sol";
+import "ERC1155.sol";
 
 
 
@@ -83,5 +83,3 @@ contract Futures1155 is ERC1155 {
 
 
 }
-
-

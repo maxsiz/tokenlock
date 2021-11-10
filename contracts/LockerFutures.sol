@@ -2,11 +2,11 @@
 // Platinum Software Dev Team
 // Locker  ALFA  version.Testing is in progress.
 
-pragma solidity ^0.8.4;
+pragma solidity 0.8.9;
 
-import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/access/Ownable.sol";
-import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC1155/IERC1155.sol";
-import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/access/Ownable.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.3.2/contracts/access/Ownable.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.3.2/contracts/token/ERC1155/IERC1155.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.3.2/contracts/access/Ownable.sol";
 import "./LockerTypes.sol";
 import "./Locker.sol";
 

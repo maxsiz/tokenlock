@@ -2,10 +2,10 @@
 // Platinum Software Dev Team
 // Locker  Beta  version.
 
-pragma solidity ^0.8.4;
+pragma solidity 0.8.9;
 
-import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/IERC20.sol";
-import "OpenZeppelin/openzeppelin-contracts@4.1.0/contracts/token/ERC20/utils/SafeERC20.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.3.2/contracts/token/ERC20/IERC20.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.3.2/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./LockerTypes.sol";
 
 contract Locker is LockerTypes {
