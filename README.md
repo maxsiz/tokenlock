@@ -11,6 +11,24 @@ brownie test
 
 Don't forget [ganache-cli](https://www.npmjs.com/package/ganache-cli)
 
+
+## Main contract method  
+**LockerFutures**  
+`getUserShares(address _user)` - returns array of structures:  
+```solidity
+//Investor's share record
+    struct RegistryShare {
+        uint256 lockIndex;     //Array index of lock record
+        uint256 sharePercent;  //Investors share in this lock
+        uint256 claimedAmount; //Already claimed amount
+    }
+```    
+` getUserBalances(address _user, uint256 _lockIndex)` - returns tuple of two int:  
+- totalBalance - total balance in Lock (minus already claimed);  
+- available - available for claim in **this** moment;  
+
+`getLockRecordByIndex(uint256 _index)` - returns structure with common lock Info
+
 ## Deployments Info
 
 ### Rinkeby TestNet ALFA (DEMO, NFT claim checks OFF)  20210619

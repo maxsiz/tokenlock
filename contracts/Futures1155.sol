@@ -1,14 +1,19 @@
 // SPDX-License-Identifier: MIT
+// https://eips.ethereum.org/EIPS/eip-1155
 pragma solidity 0.8.9;
 
-import "OpenZeppelin/openzeppelin-contracts@4.3.2/contracts/token/ERC1155/ERC1155.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.3.2/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
+import "OpenZeppelin/openzeppelin-contracts@4.3.2/contracts/utils/Strings.sol";
 
 
 
-contract Futures1155 is ERC1155 {
+contract Futures1155 is ERC1155Supply {
+
+    using Strings for uint256;
+    using Strings for uint160;
     
     address public locker;
-    string public name = 'Platinum Locker Collection';
+    string  public name = 'Platinum Locker Collection';
     mapping(uint256 => bool) public tansferrable;
     
     /**
@@ -77,10 +82,15 @@ contract Futures1155 is ERC1155 {
         }
     }
 
-
-
-
-
+    function uri(uint256 _tokenID) public view virtual override 
+        returns (string memory) 
+    {
+        return string(abi.encodePacked(
+            ERC1155.uri(0),
+            uint160(address(this)).toHexString(),
+            "/", _tokenID.toString())
+        );
+    }
 
 }
 
